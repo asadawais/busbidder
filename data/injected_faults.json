@@ -1,0 +1,105 @@
+{
+  "seed": 42,
+  "faults": [
+    {
+      "offer_id": "CST-BIL-20270714-1630-B",
+      "fault": "negative price",
+      "expected_action": "rejected"
+    },
+    {
+      "offer_id": "NOC-MUR-20270712-2030-B",
+      "fault": "unknown destination",
+      "expected_action": "rejected"
+    },
+    {
+      "offer_id": "CAM-VAL-20270715-0630-S",
+      "fault": "unknown company",
+      "expected_action": "rejected"
+    },
+    {
+      "offer_id": "VER-GRA-20270713-0800-F",
+      "fault": "invalid date",
+      "expected_action": "rejected"
+    },
+    {
+      "offer_id": "NOC-BAR-20270716-2330-S",
+      "fault": "arrival before departure",
+      "expected_action": "rejected"
+    },
+    {
+      "offer_id": "NOC-VAL-20270711-2030-B",
+      "fault": "rating outside 1-5 scale",
+      "expected_action": "rejected"
+    },
+    {
+      "offer_id": "CST-BIL-20270715-1300-B",
+      "fault": "negative seat count",
+      "expected_action": "rejected"
+    },
+    {
+      "offer_id": "CST-MUR-20270710-1630-B",
+      "fault": "missing price",
+      "expected_action": "rejected"
+    },
+    {
+      "offer_id": "VER_BAR_20270712_0800_S",
+      "fault": "malformed offer id",
+      "expected_action": "rejected"
+    },
+    {
+      "offer_id": "NOC-COR-20270716-2330-B",
+      "fault": "offer id does not match destination",
+      "expected_action": "rejected"
+    },
+    {
+      "offer_id": "CAM-BIL-20270711-0800-F",
+      "fault": "invalid refund category",
+      "expected_action": "rejected"
+    },
+    {
+      "offer_id": "SOL-SSB-20270711-1230-B",
+      "fault": "duplicate offer id",
+      "expected_action": "rejected"
+    },
+    {
+      "offer_id": "CAM-GRA-20270711-0800-S",
+      "fault": "stated duration disagrees with times",
+      "expected_action": "corrected"
+    },
+    {
+      "offer_id": "CAM-CAD-20270712-0800-F",
+      "fault": "comma decimal separator in price",
+      "expected_action": "corrected"
+    },
+    {
+      "offer_id": "VER-BAR-20270712-1830-F",
+      "fault": "upper-case category value",
+      "expected_action": "corrected"
+    },
+    {
+      "offer_id": "CST-SSB-20270716-1900-S",
+      "fault": "implausibly fast journey",
+      "expected_action": "review"
+    },
+    {
+      "offer_id": "NOC-TOL-20270712-2030-B",
+      "fault": "extreme price",
+      "expected_action": "review"
+    },
+    {
+      "offer_id": "CST-BAR-20270715-0930-B",
+      "fault": "missing rating (optional field)",
+      "expected_action": "accepted"
+    },
+    {
+      "offer_id": "CST-BIL-20270711-0730-S",
+      "fault": "missing rating (optional field)",
+      "expected_action": "accepted"
+    },
+    {
+      "offer_id": "SOL-SAL-20270714-1230-B",
+      "fault": "missing rating (optional field)",
+      "expected_action": "accepted"
+    }
+  ]
+}
