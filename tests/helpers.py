@@ -4,10 +4,19 @@ from __future__ import annotations
 
 import csv
 import json
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, Iterable, List
 
-from busbidder.models import Company, Destination
+from busbidder.models import (
+    ChangePolicy,
+    Company,
+    Destination,
+    FareClass,
+    FareConditions,
+    Offer,
+    RefundPolicy,
+)
 from busbidder.validation import OFFER_FIELDS
 
 COMPANIES = {
@@ -45,6 +54,29 @@ def valid_row(**overrides: str) -> Dict[str, str]:
     }
     row.update(overrides)
     return row
+
+
+def make_offer(offer_id: str = "SOL-MAL-20270712-0830-S", *, company: str = "SOL",
+               destination: str = "MAL", departure: str = "2027-07-12 08:30",
+               duration: int = 435, price: float = 34.99, transfers: int = 0,
+               fare: str = "S", change: str = "fee", refund: str = "none",
+               bags: int = 1, seats: int = 10, rating=4.0, co2=20.0) -> Offer:
+    """Build an Offer directly (no CSV) for filter and ranking tests."""
+    dep = datetime.strptime(departure, "%Y-%m-%d %H:%M")
+    return Offer(
+        offer_id=offer_id,
+        company=COMPANIES[company],
+        destination=DESTINATIONS[destination],
+        departure=dep,
+        arrival=dep + timedelta(minutes=duration),
+        price_eur=price,
+        transfers=transfers,
+        fare=FareConditions(FareClass(fare), ChangePolicy(change),
+                            8.0 if change == "fee" else 0.0, RefundPolicy(refund), bags),
+        seats_available=seats,
+        rating=rating,
+        co2_kg=co2,
+    )
 
 
 def write_dataset(folder: Path, offer_rows: Iterable[Dict[str, str]],
