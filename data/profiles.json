@@ -1,0 +1,36 @@
+{
+  "profiles": [
+    {
+      "id": "budget",
+      "name": "Budget traveller",
+      "description": "Wants the lowest price and accepts a long or indirect journey.",
+      "preferred_departure": null,
+      "weights": {"price": 55, "duration": 15, "departure": 10, "flexibility": 10, "transfers": 10},
+      "constraints": {}
+    },
+    {
+      "id": "business",
+      "name": "Business traveller",
+      "description": "Needs an early, fast, direct journey and a ticket that can be changed.",
+      "preferred_departure": "06:00-09:00",
+      "weights": {"price": 10, "duration": 35, "departure": 25, "flexibility": 20, "transfers": 10},
+      "constraints": {"require_changeable": true, "max_transfers": 0}
+    },
+    {
+      "id": "flexible",
+      "name": "Flexibility-focused tourist",
+      "description": "Plans may change, so free changes and refunds matter most. Brings a suitcase.",
+      "preferred_departure": "10:00-14:00",
+      "weights": {"price": 20, "duration": 10, "departure": 10, "flexibility": 45, "rating": 15},
+      "constraints": {"min_luggage_bags": 1}
+    },
+    {
+      "id": "eco",
+      "name": "Environment-focused traveller",
+      "description": "Prefers verified low emissions and daytime travel.",
+      "preferred_departure": "morning",
+      "weights": {"price": 20, "duration": 15, "departure": 10, "flexibility": 10, "emissions": 45},
+      "constraints": {}
+    }
+  ]
+}
