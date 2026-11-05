@@ -18,6 +18,7 @@ INJECTED_FAULTS_FILE = DATA_DIR / "injected_faults.json"
 
 OUTPUT_DIR = PROJECT_ROOT / "output"
 QUARANTINE_DIR = OUTPUT_DIR / "quarantine"
+BOOKINGS_FILE = OUTPUT_DIR / "bookings.json"
 
 LOG_DIR = PROJECT_ROOT / "logs"
 LOG_FILE = LOG_DIR / "busbidder.log"

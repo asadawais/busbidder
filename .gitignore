@@ -6,3 +6,5 @@ venv/
 .vscode/
 logs/
 output/quarantine/
+output/bookings.json
+output/bookings.tmp

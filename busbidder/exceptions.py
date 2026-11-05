@@ -79,3 +79,7 @@ class BookingError(BusBidderError):
 
 class SeatUnavailableError(BookingError):
     """The selected offer has no seats left."""
+
+
+class BookingNotFoundError(BookingError):
+    """No booking exists with the given reference."""
