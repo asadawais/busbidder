@@ -15,6 +15,7 @@ Rules
 
 from __future__ import annotations
 
+import math
 import re
 from typing import Dict, Iterator, List, Mapping
 
@@ -56,10 +57,10 @@ class Weights(Mapping[str, float]):
             raise ConfigurationError(
                 f"Core criteria need a weight above zero: {', '.join(missing)}"
             )
-        total = sum(values.values())
+        total = math.fsum(values.values())
         if abs(total - 100) <= 100 * SUM_TOLERANCE:
             values = {name: value / 100 for name, value in values.items()}
-            total = sum(values.values())
+            total = math.fsum(values.values())
         if abs(total - 1.0) > SUM_TOLERANCE:
             raise ConfigurationError(
                 f"Weights total {total:g}; they must total 1.0 (or 100 as percentages)"

@@ -3,6 +3,9 @@
     total(offer) = sum over criteria c of  weight_c * score_c(offer)
 
 Every score is 0-100 and the weights total 1.0, so the total is also 0-100.
+Totals are added with ``math.fsum``, which is exactly rounded. The built-in
+``sum`` became more precise in Python 3.12, so without fsum a total that lies
+on a rounding boundary could differ between Python versions.
 
 Ties
 ----
@@ -15,6 +18,7 @@ one above them are marked ``tied`` so the explanation can say so.
 
 from __future__ import annotations
 
+import math
 import statistics
 from dataclasses import dataclass, field
 from typing import Dict, Iterable, List, Optional
@@ -68,7 +72,7 @@ class Ranker:
                 scores[name] = CriterionScore(name, raw, round(value, 2), weight)
         return [
             RankedOffer(rank=0, offer=offer, scores=scores,
-                        total=round(sum(s.contribution for s in scores.values()), 2))
+                        total=round(math.fsum(s.contribution for s in scores.values()), 2))
             for offer, scores in zip(offers, per_offer)
         ]
 
@@ -116,7 +120,7 @@ def criterion_influence(ranked: List[RankedOffer]) -> Dict[str, float]:
         * statistics.pstdev(r.scores[name].score for r in ranked)
         for name in names
     }
-    total = sum(spread.values())
+    total = math.fsum(spread.values())
     if total == 0:
         return {name: 0.0 for name in names}
     return {name: value / total for name, value in spread.items()}
