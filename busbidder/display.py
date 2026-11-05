@@ -8,7 +8,10 @@ from __future__ import annotations
 
 from typing import List
 
+from .booking import Booking, confirmation_lines
 from .criteria import get_criterion
+from .explain import explain
+from .profiles import ProfileResult, cross_ranks
 from .ranking import SearchResult, criterion_influence
 
 
@@ -75,4 +78,79 @@ def format_ranking(result: SearchResult, top: int = 10) -> List[str]:
         parts = ", ".join(f"{name} {share:.0%}" for name, share in
                           sorted(influence.items(), key=lambda kv: -kv[1]))
         lines.append(f"What actually separated the offers: {parts}")
+    return lines
+
+
+def format_explanation(lines: List[str]) -> List[str]:
+    if not lines:
+        return []
+    return ["WHY THIS RECOMMENDATION"] + [f"  {line}" for line in lines]
+
+
+def format_compare(results: List[ProfileResult], destination_name: str,
+                   top: int = 3) -> List[str]:
+    lines: List[str] = []
+    for item in results:
+        profile, result = item.profile, item.result
+        lines.append("=" * 78)
+        lines.append(f"{profile.name.upper()} ({profile.profile_id})")
+        lines.append(f"  {profile.description}")
+        window = profile.preferred_departure or "none"
+        lines.append(f"  Weights: {profile.weights.describe()}")
+        lines.append(f"  Preferred departure: {window}. Extra hard constraints: "
+                     f"{profile.constraint_text()}.")
+        lines.append(f"  Acceptable offers: {len(result.ranked)} of "
+                     f"{result.filtered.in_scope} on this route and dates")
+        lines.append("")
+        lines += ["  " + line for line in format_ranking(result, top)[:-2]]
+        lines.append("")
+        lines += ["  " + line for line in explain(result)[:-1]]
+        lines.append("")
+
+    lines.append("=" * 78)
+    lines.append(f"SUMMARY: recommended offer per profile (Madrid -> {destination_name})")
+    header = (f"{'Profile':<11}{'Company':<16}{'Date':<8}{'Dep':<6}{'Time':<6}"
+              f"{'EUR':>7} {'Tr':>2}  {'Fare':<9}{'CO2':>6}{'Total':>8}")
+    lines += [header, "-" * len(header)]
+    winners = set()
+    for item in results:
+        best = item.result.best
+        if best is None:
+            lines.append(f"{item.profile.profile_id:<11}no acceptable offer")
+            continue
+        o = best.offer
+        winners.add(o.offer_id)
+        co2 = "n/a" if o.co2_kg is None else f"{o.co2_kg:.1f}"
+        lines.append(f"{item.profile.profile_id:<11}{o.company.name:<16}{o.departure:%a %d}  "
+                     f"{o.departure:%H:%M} {format_duration(o.duration_min):<6}"
+                     f"{o.price_eur:>7.2f} {o.transfers:>2}  {o.fare.fare_class.label:<9}"
+                     f"{co2:>6}{best.total:>8.2f}")
+    lines.append(f"{len(winners)} different offer(s) recommended for {len(results)} profile(s).")
+
+    table = cross_ranks(results)
+    if table:
+        ids = [r.profile.profile_id for r in results]
+        lines.append("")
+        lines.append("Rank of each profile's winner under every profile (- = removed by "
+                     "that profile's hard constraints):")
+        lines.append(f"{'Winner of':<11}" + "".join(f"{i:>10}" for i in ids))
+        for owner, row in table.items():
+            cells = "".join(f"{('-' if row[i] is None else '#' + str(row[i])):>10}" for i in ids)
+            lines.append(f"{owner:<11}{cells}")
+    return lines
+
+
+def format_booking(booking: Booking) -> List[str]:
+    return ["BOOKING CONFIRMATION"] + [f"  {line}" for line in confirmation_lines(booking)]
+
+
+def format_booking_list(bookings: List[Booking]) -> List[str]:
+    if not bookings:
+        return ["No bookings yet."]
+    header = f"{'Reference':<11}{'Status':<11}{'Passenger':<22}{'Departure':<18}{'To':<14}{'EUR':>8}"
+    lines = [header, "-" * len(header)]
+    for b in bookings:
+        lines.append(f"{b.reference:<11}{b.status:<11}{b.passenger_name[:21]:<22}"
+                     f"{b.departure.replace('T', ' '):<18}{b.destination[:13]:<14}"
+                     f"{b.total_price_eur:>8.2f}")
     return lines

@@ -4,8 +4,8 @@ A modular Python application that filters and ranks competing bus offers from
 Madrid for an individual traveller, explains the recommendation and makes a
 simulated booking. Final project for ACIT4420 Problem-solving with scripting.
 
-> Status: Stage 2 (data, validation, filtering and weighted ranking).
-> Explanations, traveller profiles and booking follow in later stages.
+> Status: Stage 3 (validation, filtering, ranking, explanations, traveller
+> profiles and simulated booking). Final polish follows in Stage 4.
 
 ## Requirements
 
@@ -28,16 +28,21 @@ busbidder/              application package
   criteria.py           scoring criteria (registry decorator) and normalisation
   weights.py            weight parsing and validation
   ranking.py            weighted ranking, tie-breaking, criterion influence
+  explain.py            generated explanation of a recommendation
+  profiles.py           traveller profiles and profile comparison
+  booking.py            simulated booking, references, cancellation
   display.py            text tables for the CLI
   cli.py                command-line interface
 data/                   input data (generated with seed 42)
   companies.json
   destinations.csv
   offers.csv
+  profiles.json         traveller profiles (weights, departure window, extra constraints)
   injected_faults.json  list of deliberately faulty records and their expected outcome
 tests/                  unit tests (unittest)
 logs/                   log file (created at run time)
 output/quarantine/      rejected and review records (created at run time)
+output/bookings.json    saved bookings (created at run time)
 ```
 
 ## Commands
@@ -68,7 +73,27 @@ Use custom weights (percentages or fractions, must total 100 or 1.0):
 python3 -m busbidder search --to Malaga --from 2027-07-12 --until 2027-07-14 --weights price=30,duration=20,departure=10,flexibility=20,emissions=20
 ```
 
-Run `python3 -m busbidder search --help` for every option.
+Search with a traveller profile, then choose an offer to book:
+
+```
+python3 -m busbidder search --to Malaga --from 2027-07-12 --until 2027-07-14 --profile business --book
+```
+
+Compare all traveller profiles on the same trip:
+
+```
+python3 -m busbidder compare --to Malaga --from 2027-07-12 --until 2027-07-14
+```
+
+Book directly, list bookings and cancel (simulated refund):
+
+```
+python3 -m busbidder book SOL-MAL-20270714-1000-S --name "Ana Garcia"
+python3 -m busbidder bookings
+python3 -m busbidder cancel BB-XXXXXX
+```
+
+Run `python3 -m busbidder --help` or `python3 -m busbidder search --help` for every option.
 
 Run the tests:
 
@@ -109,3 +134,24 @@ Each criterion is converted to a 0-100 score, then combined with the weights:
 Missing emissions score 0. Default weights: price 40%, duration 25%,
 departure 15%, flexibility 20%. Ties are broken by price, duration,
 departure time and offer id.
+
+## Traveller profiles
+
+Defined in `data/profiles.json`. A profile can only make the base trip
+stricter (the stricter value wins when both set the same constraint).
+
+| Profile | Weights | Departure | Extra hard constraints |
+|---|---|---|---|
+| budget | price 55, duration 15, departure 10, flexibility 10, transfers 10 | none | none |
+| business | price 10, duration 35, departure 25, flexibility 20, transfers 10 | 06:00-09:00 | changeable, direct |
+| flexible | price 20, duration 10, departure 10, flexibility 45, rating 15 | 10:00-14:00 | at least 1 checked bag |
+| eco | price 20, duration 15, departure 10, flexibility 10, emissions 45 | morning | none |
+
+## Booking
+
+Seats in `offers.csv` are never changed. Confirmed bookings are stored in
+`output/bookings.json` and subtracted from the seat counts every time the
+program starts, so capacity stays consistent between runs. References have
+the form `BB-XXXXXX` (no 0/O or 1/I). No payment information is collected.
+Cancelling releases the seats and computes a simulated refund from the
+stored fare conditions (full 100%, partial 50%, none 0%).

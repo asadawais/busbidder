@@ -1,26 +1,91 @@
 """Command-line interface.
 
-Commands: ``validate`` (check the data files) and ``search`` (filter and rank
-offers for one trip). Booking is added in a later stage.
+Commands
+--------
+validate   check the data files and show what was rejected, corrected or held back
+search     filter and rank offers for one trip, explain the top offer, optionally book
+compare    run the same trip for several traveller profiles
+book       book an offer by its id
+bookings   list bookings or show one
+cancel     cancel a booking (simulated refund)
 """
 
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, Sequence
+from typing import Callable, Optional, Sequence
 
 from . import config
-from .display import format_ranking, format_request
-from .exceptions import BusBidderError, InvalidRequestError
+from .booking import BookingManager
+from .display import (
+    format_booking,
+    format_booking_list,
+    format_compare,
+    format_explanation,
+    format_ranking,
+    format_request,
+)
+from .exceptions import BookingError, BusBidderError, InvalidRequestError
+from .explain import explain
 from .loader import load_marketplace
 from .logging_setup import configure_logging
-from .ranking import search
+from .models import Marketplace
+from .profiles import compare_profiles, load_profiles, select_profiles
+from .ranking import SearchResult, search
 from .request import TimeWindow, TravelRequest
 from .validation import Action
 from .weights import Weights
+
+InputFn = Callable[[str], str]
+
+
+def _print(lines) -> None:
+    for line in lines:
+        print(line)
+
+
+def _open(args: argparse.Namespace):
+    """Load the marketplace and apply existing bookings to the seat counts."""
+    market = load_marketplace(args.data, quarantine_dir=config.QUARANTINE_DIR).marketplace
+    manager = BookingManager(market, config.BOOKINGS_FILE)
+    return market, manager
+
+
+def _parse_date(text: str):
+    try:
+        return datetime.strptime(text, "%Y-%m-%d").date()
+    except ValueError:
+        raise InvalidRequestError(f"Date {text!r} must use YYYY-MM-DD") from None
+
+
+def build_request(args: argparse.Namespace, market: Marketplace) -> TravelRequest:
+    destination = market.find_destination(args.to)
+    if destination is None:
+        names = ", ".join(sorted(d.name for d in market.destinations.values()))
+        raise InvalidRequestError(f"Unknown destination {args.to!r}. Choose from: {names}")
+    earliest = _parse_date(args.date_from)
+    latest = _parse_date(args.date_until) if args.date_until else earliest
+    depart = getattr(args, "depart", None)
+    return TravelRequest(
+        destination=destination.code,
+        earliest_date=earliest,
+        latest_date=latest,
+        max_price_eur=args.budget,
+        preferred_departure=TimeWindow.parse(depart) if depart else None,
+        max_transfers=args.max_transfers,
+        require_changeable=args.changeable,
+        require_refundable=args.refundable,
+        min_luggage_bags=args.bags,
+        max_duration_min=round(args.max_hours * 60) if args.max_hours else None,
+        passengers=args.passengers,
+    )
+
+
+# --- commands -----------------------------------------------------------------
 
 
 def cmd_validate(args: argparse.Namespace) -> int:
@@ -28,8 +93,7 @@ def cmd_validate(args: argparse.Namespace) -> int:
     report = result.report
     market = result.marketplace
     print(f"Companies: {len(market.companies)}   Destinations: {len(market.destinations)}")
-    for line in report.summary_lines():
-        print(line)
+    _print(report.summary_lines())
     if args.verbose:
         for action in (Action.REJECTED, Action.REVIEW, Action.CORRECTED):
             issues = [i for i in report.issues if i.action is action]
@@ -43,53 +107,113 @@ def cmd_validate(args: argparse.Namespace) -> int:
     return 0
 
 
-def _parse_date(text: str):
-    try:
-        return datetime.strptime(text, "%Y-%m-%d").date()
-    except ValueError:
-        raise InvalidRequestError(f"Date {text!r} must use YYYY-MM-DD") from None
+def _choose_and_book(result: SearchResult, manager: BookingManager,
+                     ask: InputFn, profile_id: Optional[str]) -> int:
+    """Let the traveller pick a ranked offer and book it."""
+    count = len(result.ranked)
+    while True:
+        answer = ask(f"\nEnter the rank (1-{count}) of the offer to book, or press Enter "
+                     "to skip: ").strip()
+        if not answer:
+            print("No booking made.")
+            return 0
+        if answer.isdigit() and 1 <= int(answer) <= count:
+            chosen = result.ranked[int(answer) - 1]
+            break
+        print(f"Please enter a number from 1 to {count}.")
+
+    _print(format_explanation(explain(result, chosen)) if chosen.rank > 1 else [])
+    while True:
+        name = ask("Passenger name: ")
+        ranking = {"rank": chosen.rank, "total": chosen.total,
+                   "weights": result.weights.describe(), "profile": profile_id}
+        try:
+            booking = manager.book(chosen.offer.offer_id, name, result.request.passengers,
+                                   ranking=ranking)
+        except BookingError as err:
+            print(f"Booking failed: {err}")
+            if "name" in str(err).lower():
+                continue
+            return 1
+        print()
+        _print(format_booking(booking))
+        return 0
 
 
-def build_request(args: argparse.Namespace, market) -> TravelRequest:
-    destination = market.find_destination(args.to)
-    if destination is None:
-        names = ", ".join(sorted(d.name for d in market.destinations.values()))
-        raise InvalidRequestError(f"Unknown destination {args.to!r}. Choose from: {names}")
-    earliest = _parse_date(args.date_from)
-    latest = _parse_date(args.date_until) if args.date_until else earliest
-    return TravelRequest(
-        destination=destination.code,
-        earliest_date=earliest,
-        latest_date=latest,
-        max_price_eur=args.budget,
-        preferred_departure=TimeWindow.parse(args.depart) if args.depart else None,
-        max_transfers=args.max_transfers,
-        require_changeable=args.changeable,
-        require_refundable=args.refundable,
-        min_luggage_bags=args.bags,
-        max_duration_min=round(args.max_hours * 60) if args.max_hours else None,
-        passengers=args.passengers,
-    )
-
-
-def cmd_search(args: argparse.Namespace) -> int:
-    market = load_marketplace(args.data, quarantine_dir=config.QUARANTINE_DIR).marketplace
+def cmd_search(args: argparse.Namespace, ask: Optional[InputFn] = None) -> int:
+    ask = ask or input  # looked up at call time so tests can replace input()
+    market, manager = _open(args)
     request = build_request(args, market)
-    weights = Weights.parse(args.weights) if args.weights else Weights.default()
+    profile_id = None
+    if args.profile:
+        if args.weights:
+            raise InvalidRequestError("Use either --profile or --weights, not both")
+        profile = select_profiles(load_profiles(args.profiles_file), [args.profile])[0]
+        request = profile.apply(request)
+        if args.depart:  # an explicit --depart overrides the profile's window
+            request = dataclasses.replace(request,
+                                          preferred_departure=TimeWindow.parse(args.depart))
+        weights, profile_id = profile.weights, profile.profile_id
+    else:
+        weights = Weights.parse(args.weights) if args.weights else Weights.default()
+
     result = search(market, request, weights)
     destination = market.destinations[request.destination].name
-    for line in format_request(result, destination):
-        print(line)
+    if profile_id:
+        print(f"Profile: {profile_id}")
+    _print(format_request(result, destination))
     print()
-    for line in result.filtered.summary_lines():
-        print(line)
+    _print(result.filtered.summary_lines())
     print()
-    for line in format_ranking(result, args.top):
-        print(line)
+    _print(format_ranking(result, args.top))
+    print()
+    _print(format_explanation(explain(result)))
+    if args.book and result.ranked:
+        return _choose_and_book(result, manager, ask, profile_id)
     return 0
 
 
-def add_search_arguments(parser: argparse.ArgumentParser) -> None:
+def cmd_compare(args: argparse.Namespace) -> int:
+    market, _ = _open(args)
+    base = build_request(args, market)
+    ids = [i.strip() for i in args.profiles.split(",")] if args.profiles else None
+    profiles = select_profiles(load_profiles(args.profiles_file), ids)
+    results = compare_profiles(market, base, profiles)
+    destination = market.destinations[base.destination].name
+    print("Base trip (hard constraints shared by every profile):")
+    _print(f"  - {line}" for line in base.hard_constraint_lines(destination))
+    print()
+    _print(format_compare(results, destination, args.top))
+    return 0
+
+
+def cmd_book(args: argparse.Namespace) -> int:
+    _, manager = _open(args)
+    booking = manager.book(args.offer_id.strip().upper(), args.name, args.passengers)
+    _print(format_booking(booking))
+    return 0
+
+
+def cmd_bookings(args: argparse.Namespace) -> int:
+    _, manager = _open(args)
+    if args.reference:
+        _print(format_booking(manager.get(args.reference)))
+    else:
+        _print(format_booking_list(manager.all()))
+    return 0
+
+
+def cmd_cancel(args: argparse.Namespace) -> int:
+    _, manager = _open(args)
+    booking = manager.cancel(args.reference)
+    _print(format_booking(booking))
+    return 0
+
+
+# --- argument parsing ---------------------------------------------------------
+
+
+def add_trip_arguments(parser: argparse.ArgumentParser) -> None:
     hard = parser.add_argument_group("hard constraints (offers breaking these are removed)")
     hard.add_argument("--to", required=True, help="destination name or code, e.g. Malaga or MAL")
     hard.add_argument("--from", dest="date_from", required=True, metavar="YYYY-MM-DD",
@@ -103,21 +227,16 @@ def add_search_arguments(parser: argparse.ArgumentParser) -> None:
     hard.add_argument("--bags", type=int, help="minimum checked bags included")
     hard.add_argument("--max-hours", type=float, help="maximum journey time in hours")
     hard.add_argument("--passengers", type=int, default=1)
-    soft = parser.add_argument_group("soft preferences (only affect the score)")
-    soft.add_argument("--depart", help="preferred departure: early, morning, afternoon, "
-                                       "evening, night or HH:MM-HH:MM")
-    soft.add_argument("--weights", help="e.g. price=40,duration=25,departure=15,flexibility=20 "
-                                        "(optional extra: transfers, rating, emissions)")
-    parser.add_argument("--top", type=int, default=10, help="number of offers to show")
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="python -m busbidder",
+        prog="python3 -m busbidder",
         description="BusBidder Spain - filter, rank and book bus offers from Madrid.",
     )
     parser.add_argument("--data", type=Path, default=config.DATA_DIR,
                         help="folder containing companies.json, destinations.csv, offers.csv")
+    parser.add_argument("--profiles-file", type=Path, default=config.DATA_DIR / "profiles.json")
     sub = parser.add_subparsers(dest="command", required=True)
 
     validate = sub.add_parser("validate", help="load and validate the data files")
@@ -125,9 +244,39 @@ def build_parser() -> argparse.ArgumentParser:
                           help="list every rejected, corrected and review record")
     validate.set_defaults(func=cmd_validate)
 
-    search_cmd = sub.add_parser("search", help="filter and rank offers for a trip")
-    add_search_arguments(search_cmd)
+    search_cmd = sub.add_parser("search", help="filter, rank and explain offers for a trip")
+    add_trip_arguments(search_cmd)
+    soft = search_cmd.add_argument_group("soft preferences (only affect the score)")
+    soft.add_argument("--depart", help="preferred departure: early, morning, afternoon, "
+                                       "evening, night or HH:MM-HH:MM")
+    soft.add_argument("--weights", help="e.g. price=40,duration=25,departure=15,flexibility=20 "
+                                        "(optional extra: transfers, rating, emissions)")
+    soft.add_argument("--profile", help="use a traveller profile's weights, departure window "
+                                        "and extra constraints (budget, business, flexible, eco)")
+    search_cmd.add_argument("--top", type=int, default=10, help="number of offers to show")
+    search_cmd.add_argument("--book", action="store_true",
+                            help="choose an offer from the ranking and book it")
     search_cmd.set_defaults(func=cmd_search)
+
+    compare = sub.add_parser("compare", help="compare traveller profiles on the same trip")
+    add_trip_arguments(compare)
+    compare.add_argument("--profiles", help="comma-separated profile ids (default: all)")
+    compare.add_argument("--top", type=int, default=3, help="offers shown per profile")
+    compare.set_defaults(func=cmd_compare)
+
+    book = sub.add_parser("book", help="book an offer by id")
+    book.add_argument("offer_id", help="e.g. SOL-MAL-20270714-1000-S")
+    book.add_argument("--name", required=True, help="passenger name")
+    book.add_argument("--passengers", type=int, default=1)
+    book.set_defaults(func=cmd_book)
+
+    bookings = sub.add_parser("bookings", help="list bookings, or show one by reference")
+    bookings.add_argument("reference", nargs="?", help="e.g. BB-7K3Q9X")
+    bookings.set_defaults(func=cmd_bookings)
+
+    cancel = sub.add_parser("cancel", help="cancel a booking (simulated refund)")
+    cancel.add_argument("reference")
+    cancel.set_defaults(func=cmd_cancel)
     return parser
 
 
@@ -140,6 +289,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     except BusBidderError as err:
         print(f"Error: {err}", file=sys.stderr)
         return 1
+    except (KeyboardInterrupt, EOFError):
+        print("\nCancelled.", file=sys.stderr)
+        return 130
 
 
 if __name__ == "__main__":
