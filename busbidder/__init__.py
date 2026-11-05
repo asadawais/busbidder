@@ -1,3 +1,8 @@
 """BusBidder Spain: a bus-offer filtering, ranking and booking marketplace."""
 
-__version__ = "0.1.0"
+import logging
+
+__version__ = "0.2.0"
+
+# Stay silent unless the application configures logging (see logging_setup).
+logging.getLogger(__name__).addHandler(logging.NullHandler())
