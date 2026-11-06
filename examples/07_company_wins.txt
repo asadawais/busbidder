@@ -1,0 +1,16 @@
+07 WHICH COMPANIES WIN (15 routes x 5 setups = default weights + 4 profiles)
+
+Setup              SolRuta  Camino Express       CostaLink        VerdeBus        NocheVia
+default                  7               2               5               1               0
+budget                  13               0               2               0               0
+business                 1              11               1               2               0
+eco                      0               0               0              15               0
+flexible                 0               7               0               8               0
+all                     21              20               8              26               0
+
+Average rank of each company's best offer (lower is better):
+  SolRuta           11.6  (present in 75 of 75 rankings)
+  Camino Express     9.6  (present in 74 of 75 rankings)
+  CostaLink         10.3  (present in 68 of 75 rankings)
+  VerdeBus           6.2  (present in 75 of 75 rankings)
+  NocheVia          26.9  (present in 75 of 75 rankings)

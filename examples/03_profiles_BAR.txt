@@ -1,0 +1,102 @@
+03 TRAVELLER PROFILES: MADRID -> BARCELONA, 12-14 JULY 2027
+
+==============================================================================
+BUDGET TRAVELLER (budget)
+  Wants the lowest price and accepts a long or indirect journey.
+  Weights: price 55%, duration 15%, departure 10%, flexibility 10%, transfers 10%
+  Preferred departure: none. Extra hard constraints: none.
+  Acceptable offers: 49 of 49 on this route and dates
+
+    #  Company        Date       Dep   Arr      Time      EUR Tr  Fare        Price     Dur DepTime    Flex  Transf   TOTAL
+  -------------------------------------------------------------------------------------------------------------------------
+    1  SolRuta        Mon 12     07:00 15:40    8h40    34.99  0  Basic          93      39     100       0     100   77.28
+    2  CostaLink      Wed 14     09:30 17:40    8h10    42.49  0  Basic          83      65     100       0     100   75.22
+    3  CostaLink      Mon 12     16:30 00:40+1  8h10    42.99  0  Basic          82      65     100       0     100   74.82
+    4  SolRuta        Mon 12     08:30 17:10    8h40    38.99  0  Basic          88      39     100       0     100   74.09
+    5  CostaLink      Tue 13     16:30 00:40+1  8h10    43.99  0  Basic          80      65     100       0     100   74.02
+  ... 44 more offer(s) not shown (use --top)
+
+  SolRuta Mon 12 Jul 07:00 -> Barcelona (Basic) ranks first with 77.28 of 100 points among 49 acceptable offer(s).
+  Advantages: low price (EUR 34.99, only EUR 4.50 above the cheapest); direct route with no transfers.
+  Disadvantages: Basic fare: no changes allowed, non-refundable; long journey (8 h 40 min, 1 h 10 min longer than the fastest).
+  It leads #2 (CostaLink Wed 14 Jul 09:30 -> Barcelona (Basic)) by 2.06 points, gaining on price (+6.0) while losing on duration (-3.9).
+
+==============================================================================
+BUSINESS TRAVELLER (business)
+  Needs an early, fast, direct journey and a ticket that can be changed.
+  Weights: price 10%, duration 35%, departure 25%, flexibility 20%, transfers 10%
+  Preferred departure: 06:00-09:00. Extra hard constraints: must be changeable, max transfers 0.
+  Acceptable offers: 32 of 49 on this route and dates
+
+    #  Company        Date       Dep   Arr      Time      EUR Tr  Fare        Price     Dur DepTime    Flex  Transf   TOTAL
+  -------------------------------------------------------------------------------------------------------------------------
+    1  Camino Express Wed 14     06:30 14:00    7h30    99.49  0  Flex            0     100     100     100     100   90.00
+    2  Camino Express Wed 14     06:30 14:00    7h30    74.49  0  Standard       46     100     100      30     100   80.63
+    3  Camino Express Tue 13     11:00 18:30    7h30    92.49  0  Flex           13     100      50     100     100   78.80
+    4  Camino Express Mon 12     11:00 18:30    7h30    92.99  0  Flex           12     100      50     100     100   78.70
+    5  Camino Express Wed 14     11:00 18:30    7h30    95.49  0  Flex            7     100      50     100     100   78.24
+  ... 27 more offer(s) not shown (use --top)
+
+  Camino Express Wed 14 Jul 06:30 -> Barcelona (Flex) ranks first with 90.00 of 100 points among 32 acceptable offer(s).
+  Advantages: the fastest acceptable journey (7 h 30 min); departs at 06:30, inside your preferred 06:00-09:00 window; Flex fare: free changes, full refund.
+  Disadvantages: higher price (EUR 99.49, EUR 54.00 more than the cheapest).
+  It leads #2 (Camino Express Wed 14 Jul 06:30 -> Barcelona (Standard)) by 9.37 points, gaining on flexibility (+14.0) while losing on price (-4.6).
+
+==============================================================================
+FLEXIBILITY-FOCUSED TOURIST (flexible)
+  Plans may change, so free changes and refunds matter most. Brings a suitcase.
+  Weights: price 20%, duration 10%, departure 10%, flexibility 45%, rating 15%
+  Preferred departure: 10:00-14:00. Extra hard constraints: min luggage bags 1.
+  Acceptable offers: 45 of 49 on this route and dates
+
+    #  Company        Date       Dep   Arr      Time      EUR Tr  Fare        Price     Dur DepTime    Flex  Rating   TOTAL
+  -------------------------------------------------------------------------------------------------------------------------
+    1  Camino Express Tue 13     14:00 21:30    7h30    87.99  0  Flex           19     100     100     100      85   81.52
+    2  Camino Express Mon 12     11:00 18:30    7h30    92.99  0  Flex           11     100     100     100      82   79.51
+    3  Camino Express Wed 14     11:00 18:30    7h30    95.49  0  Flex            7     100     100     100      82   78.69
+    4  Camino Express Tue 13     11:00 18:30    7h30    92.49  0  Flex           11     100     100     100      75   78.55
+    5  VerdeBus       Tue 13     10:30 18:40    8h10    81.49  0  Flex           30      60     100     100      78   78.53
+  ... 40 more offer(s) not shown (use --top)
+
+  Camino Express Tue 13 Jul 14:00 -> Barcelona (Flex) ranks first with 81.52 of 100 points among 45 acceptable offer(s).
+  Advantages: Flex fare: free changes, full refund; customer rating 4.4 of 5; the fastest acceptable journey (7 h 30 min).
+  Disadvantages: higher price (EUR 87.99, EUR 49.50 more than the cheapest).
+  It leads #2 (Camino Express Mon 12 Jul 11:00 -> Barcelona (Flex)) by 2.01 points, gaining on price (+1.6), rating (+0.4).
+
+==============================================================================
+ENVIRONMENT-FOCUSED TRAVELLER (eco)
+  Prefers verified low emissions and daytime travel.
+  Weights: price 20%, duration 15%, departure 10%, flexibility 10%, emissions 45%
+  Preferred departure: morning (06:00-12:00). Extra hard constraints: none.
+  Acceptable offers: 49 of 49 on this route and dates
+
+    #  Company        Date       Dep   Arr      Time      EUR Tr  Fare        Price     Dur DepTime    Flex     CO2   TOTAL
+  -------------------------------------------------------------------------------------------------------------------------
+    1  VerdeBus       Tue 13     10:30 18:40    8h10    81.49  0  Flex           26      65     100     100     100   80.00
+    2  VerdeBus       Tue 13     10:30 18:40    8h10    68.49  0  Standard       45      65     100      60     100   79.77
+    3  VerdeBus       Wed 14     08:00 16:10    8h10    68.49  0  Standard       45      65     100      60     100   79.77  (tie)
+    4  VerdeBus       Tue 13     13:30 21:40    8h10    70.99  0  Standard       41      65      62      60     100   75.29
+    5  VerdeBus       Wed 14     08:00 16:10    8h10    98.99  0  Flex            1      65     100     100     100   74.93
+  ... 44 more offer(s) not shown (use --top)
+
+  VerdeBus Tue 13 Jul 10:30 -> Barcelona (Flex) ranks first with 80.00 of 100 points among 49 acceptable offer(s).
+  Advantages: lowest emissions (6.8 kg CO2); departs at 10:30, inside your preferred morning window; Flex fare: free changes, full refund.
+  Disadvantages: higher price (EUR 81.49, EUR 51.00 more than the cheapest).
+  It leads #2 (VerdeBus Tue 13 Jul 10:30 -> Barcelona (Standard)) by 0.23 points, gaining on flexibility (+4.0) while losing on price (-3.8).
+
+==============================================================================
+SUMMARY: recommended offer per profile (Madrid -> Barcelona)
+Profile    Company         Date    Dep   Time      EUR Tr  Fare        CO2   Total
+----------------------------------------------------------------------------------
+budget     SolRuta         Mon 12  07:00 8h40    34.99  0  Basic      21.1   77.28
+business   Camino Express  Wed 14  06:30 7h30    99.49  0  Flex       18.0   90.00
+flexible   Camino Express  Tue 13  14:00 7h30    87.99  0  Flex       18.0   81.52
+eco        VerdeBus        Tue 13  10:30 8h10    81.49  0  Flex        6.8   80.00
+4 different offer(s) recommended for 4 profile(s).
+
+Rank of each profile's winner under every profile (- = removed by that profile's hard constraints):
+Winner of      budget  business  flexible       eco
+budget             #1         -         -       #28
+business          #46        #1        #9       #18
+flexible          #37       #14        #1       #22
+eco               #38       #10        #5        #1

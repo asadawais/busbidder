@@ -1,0 +1,40 @@
+flowchart TD
+    F["data/companies.json, destinations.csv, offers.csv"]
+    LD["loader.py + validation.py<br/>parse, validate, reject / correct / review<br/>(custom exceptions in exceptions.py)"]
+    Q[["output/quarantine/*.csv<br/>logs/busbidder.log"]]
+    M["models.py: Marketplace<br/>Company, Destination, Offer, FareConditions"]
+    B[("output/bookings.json")]
+
+    U(["Traveller<br/>cli.py / interactive.py"])
+    PJ["data/profiles.json"]
+    PR["profiles.py<br/>TravellerProfile"]
+    RQ["request.py<br/>TravelRequest = hard constraints + departure preference"]
+    W["weights.py<br/>validated weights"]
+
+    HC["constraints.py<br/>@hard_constraint registry: remove offers"]
+    RK["ranking.py + criteria.py<br/>@criterion registry: 0-100 scores, weighted total, tie-break"]
+    XP["explain.py<br/>advantages, disadvantages, lead over #2"]
+    DS["display.py<br/>ranking table + explanation"]
+    BK["booking.py<br/>check seats, reference BB-XXXXXX, save"]
+
+    F --> LD
+    LD -->|"invalid records, events"| Q
+    LD -->|"valid offers"| M
+    B -->|"subtract booked seats on start"| M
+
+    U --> RQ
+    U --> W
+    PJ --> PR
+    PR -->|"stricter constraints"| RQ
+    PR -->|"profile weights"| W
+
+    M --> HC
+    RQ --> HC
+    HC -->|"acceptable offers"| RK
+    W --> RK
+    RK --> XP
+    RK --> DS
+    XP --> DS
+    DS -->|"traveller selects an offer"| BK
+    BK -->|"reduce seats"| M
+    BK --> B

@@ -1,0 +1,24 @@
+01 VALIDATION OF THE GENERATED DATASET
+
+Offer rows read:          1575
+Accepted:                 1561 (of which corrected: 3, sold out: 57)
+Rejected:                 12
+Held back for review:     2
+
+rejected   row   364  CAM-VAL-20270715-0630-S    company_id: unknown company
+corrected  row   432  CAM-GRA-20270711-0800-S    duration_min: disagrees with departure/arrival times, corrected to 365
+rejected   row   489  CAM-BIL-20270711-0800-F    refund_policy: must be one of: none, partial, full
+corrected  row   719  CAM-CAD-20270712-0800-F    price_eur: comma decimal separator corrected to 101.99
+rejected   row   880  CST-BIL-20270714-1630-B    price_eur: price must be positive
+rejected   row   882  CST-BIL-20270715-1300-B    seats_available: must be at least 0
+review     row   917  CST-SSB-20270716-1900-S    duration_min: implies an average speed of 180 km/h (limit 110 km/h)
+rejected   row   960  CST-MUR-20270710-1630-B    price_eur: required field is missing
+rejected   row  1050  VER_BAR_20270712_0800_S    offer_id: does not match COMPANY-DEST-YYYYMMDD-HHMM-FARE
+corrected  row  1053  VER-BAR-20270712-1830-F    change_policy: normalised to 'free'
+rejected   row  1145  VER-GRA-20270713-0800-F    travel_date: not a real calendar date
+rejected   row  1379  NOC-BAR-20270716-2330-S    arrival: arrival is not after departure
+rejected   row  1382  NOC-VAL-20270711-2030-B    rating: outside the 1-5 scale
+rejected   row  1448  NOC-COR-20270716-2330-B    offer_id: destination part 'COR' does not match record value 'TOL'
+rejected   row  1510  NOC-MUR-20270712-2030-B    destination_id: unknown destination
+review     row  1538  NOC-TOL-20270712-2030-B    price_eur: above the plausibility limit of EUR 250
+rejected   row  1576  SOL-SSB-20270711-1230-B    offer_id: duplicate offer id

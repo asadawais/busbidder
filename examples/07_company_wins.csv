@@ -1,0 +1,76 @@
+route,setup,winner_company,best_rank_SolRuta,best_rank_Camino Express,best_rank_CostaLink,best_rank_VerdeBus,best_rank_NocheVia
+ALI,default,SolRuta,1,16,2,8,39
+ALI,budget,SolRuta,1,28,3,17,21
+ALI,business,VerdeBus,9,,4,1,16
+ALI,flexible,VerdeBus,19,2,11,1,26
+ALI,eco,VerdeBus,19,23,9,1,39
+BAR,default,CostaLink,6,3,1,8,42
+BAR,budget,SolRuta,1,20,2,18,21
+BAR,business,Camino Express,17,1,8,6,31
+BAR,flexible,Camino Express,24,1,15,5,29
+BAR,eco,VerdeBus,28,12,15,1,44
+BIL,default,CostaLink,9,3,1,5,38
+BIL,budget,CostaLink,2,24,1,14,17
+BIL,business,Camino Express,25,1,8,10,26
+BIL,flexible,VerdeBus,18,3,15,1,25
+BIL,eco,VerdeBus,31,12,11,1,40
+CAD,default,CostaLink,8,4,1,15,36
+CAD,budget,SolRuta,1,17,3,28,19
+CAD,business,Camino Express,20,1,9,6,22
+CAD,flexible,Camino Express,21,1,12,3,27
+CAD,eco,VerdeBus,27,11,13,1,41
+COR,default,SolRuta,1,13,17,7,35
+COR,budget,SolRuta,1,15,9,10,13
+COR,business,Camino Express,11,1,,3,16
+COR,flexible,VerdeBus,16,2,20,1,26
+COR,eco,VerdeBus,15,11,22,1,39
+GRA,default,SolRuta,1,13,15,4,34
+GRA,budget,SolRuta,1,27,9,10,15
+GRA,business,Camino Express,10,1,,3,15
+GRA,flexible,Camino Express,18,1,14,2,26
+GRA,eco,VerdeBus,14,10,21,1,38
+MAL,default,Camino Express,24,1,2,5,37
+MAL,budget,CostaLink,8,17,1,11,18
+MAL,business,Camino Express,28,1,8,6,29
+MAL,flexible,Camino Express,22,1,13,2,26
+MAL,eco,VerdeBus,33,11,14,1,39
+MUR,default,VerdeBus,2,7,8,1,26
+MUR,budget,SolRuta,1,23,8,11,13
+MUR,business,VerdeBus,11,3,,1,13
+MUR,flexible,VerdeBus,16,2,14,1,20
+MUR,eco,VerdeBus,24,9,16,1,35
+SAL,default,SolRuta,1,18,11,7,32
+SAL,budget,SolRuta,1,27,12,18,14
+SAL,business,Camino Express,9,1,,5,16
+SAL,flexible,VerdeBus,15,4,13,1,21
+SAL,eco,VerdeBus,11,7,17,1,37
+SCQ,default,SolRuta,1,11,8,9,38
+SCQ,budget,SolRuta,1,28,12,15,16
+SCQ,business,SolRuta,1,2,,5,13
+SCQ,flexible,Camino Express,18,1,15,2,26
+SCQ,eco,VerdeBus,11,14,19,1,41
+SEV,default,SolRuta,1,7,17,11,28
+SEV,budget,SolRuta,1,16,9,13,10
+SEV,business,Camino Express,11,1,,14,21
+SEV,flexible,Camino Express,12,1,16,5,23
+SEV,eco,VerdeBus,19,7,27,1,31
+SSB,default,CostaLink,2,22,1,11,45
+SSB,budget,SolRuta,1,31,4,21,23
+SSB,business,CostaLink,6,4,1,3,20
+SSB,flexible,VerdeBus,20,2,13,1,30
+SSB,eco,VerdeBus,21,28,13,1,49
+TOL,default,Camino Express,2,1,5,6,25
+TOL,budget,SolRuta,1,18,4,15,7
+TOL,business,Camino Express,7,1,20,5,29
+TOL,flexible,Camino Express,18,1,14,4,23
+TOL,eco,VerdeBus,21,11,14,1,35
+VAL,default,CostaLink,2,16,1,10,43
+VAL,budget,SolRuta,1,32,3,19,23
+VAL,business,Camino Express,16,1,5,8,30
+VAL,flexible,VerdeBus,20,3,17,1,27
+VAL,eco,VerdeBus,26,15,11,1,45
+ZAR,default,SolRuta,1,6,5,3,18
+ZAR,budget,SolRuta,1,12,5,10,6
+ZAR,business,Camino Express,13,1,,5,21
+ZAR,flexible,VerdeBus,14,2,13,1,17
+ZAR,eco,VerdeBus,17,7,21,1,25

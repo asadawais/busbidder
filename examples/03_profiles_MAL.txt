@@ -1,0 +1,102 @@
+03 TRAVELLER PROFILES: MADRID -> MALAGA, 12-14 JULY 2027
+
+==============================================================================
+BUDGET TRAVELLER (budget)
+  Wants the lowest price and accepts a long or indirect journey.
+  Weights: price 55%, duration 15%, departure 10%, flexibility 10%, transfers 10%
+  Preferred departure: none. Extra hard constraints: none.
+  Acceptable offers: 42 of 46 on this route and dates
+
+    #  Company        Date       Dep   Arr      Time      EUR Tr  Fare        Price     Dur DepTime    Flex  Transf   TOTAL
+  -------------------------------------------------------------------------------------------------------------------------
+    1  SolRuta        Tue 13     17:00 00:25+1  7h25    31.49  0  Basic          95      40     100       0     100   78.42
+    2  CostaLink      Mon 12     13:00 20:05    7h05    37.99  0  Basic          85      60     100       0     100   75.84
+    3  CostaLink      Wed 14     09:30 16:35    7h05    37.99  0  Basic          85      60     100       0     100   75.84  (tie)
+    4  CostaLink      Tue 13     09:30 16:35    7h05    39.49  0  Basic          83      60     100       0     100   74.55
+    5  CostaLink      Wed 14     09:30 16:35    7h05    45.49  0  Standard       73      60     100      50     100   74.39
+  ... 37 more offer(s) not shown (use --top)
+
+  SolRuta Tue 13 Jul 17:00 -> Malaga (Basic) ranks first with 78.42 of 100 points among 42 acceptable offer(s).
+  Advantages: low price (EUR 31.49, only EUR 3.00 above the cheapest); direct route with no transfers.
+  Disadvantages: Basic fare: no changes allowed, non-refundable; long journey (7 h 25 min, 1 h longer than the fastest).
+  It leads #2 (CostaLink Mon 12 Jul 13:00 -> Malaga (Basic)) by 2.58 points, gaining on price (+5.6) while losing on duration (-3.0).
+
+==============================================================================
+BUSINESS TRAVELLER (business)
+  Needs an early, fast, direct journey and a ticket that can be changed.
+  Weights: price 10%, duration 35%, departure 25%, flexibility 20%, transfers 10%
+  Preferred departure: 06:00-09:00. Extra hard constraints: must be changeable, max transfers 0.
+  Acceptable offers: 30 of 46 on this route and dates
+
+    #  Company        Date       Dep   Arr      Time      EUR Tr  Fare        Price     Dur DepTime    Flex  Transf   TOTAL
+  -------------------------------------------------------------------------------------------------------------------------
+    1  Camino Express Wed 14     06:30 12:55    6h25    87.99  0  Flex            8     100     100     100     100   90.84
+    2  Camino Express Tue 13     08:00 14:25    6h25    88.49  0  Flex            7     100     100     100     100   90.75
+    3  Camino Express Wed 14     06:30 12:55    6h25    61.99  0  Standard       57     100     100      30     100   81.70
+    4  Camino Express Tue 13     11:00 17:25    6h25    76.49  0  Flex           30     100      50     100     100   80.49
+    5  Camino Express Tue 13     08:00 14:25    6h25    70.99  0  Standard       40     100     100      30     100   80.02
+  ... 25 more offer(s) not shown (use --top)
+
+  Camino Express Wed 14 Jul 06:30 -> Malaga (Flex) ranks first with 90.84 of 100 points among 30 acceptable offer(s).
+  Advantages: the fastest acceptable journey (6 h 25 min); departs at 06:30, inside your preferred 06:00-09:00 window; Flex fare: free changes, full refund.
+  Disadvantages: higher price (EUR 87.99, EUR 49.00 more than the cheapest).
+  It leads #2 (Camino Express Tue 13 Jul 08:00 -> Malaga (Flex)) by 0.09 points, gaining on price (+0.1).
+
+==============================================================================
+FLEXIBILITY-FOCUSED TOURIST (flexible)
+  Plans may change, so free changes and refunds matter most. Brings a suitcase.
+  Weights: price 20%, duration 10%, departure 10%, flexibility 45%, rating 15%
+  Preferred departure: 10:00-14:00. Extra hard constraints: min luggage bags 1.
+  Acceptable offers: 39 of 46 on this route and dates
+
+    #  Company        Date       Dep   Arr      Time      EUR Tr  Fare        Price     Dur DepTime    Flex  Rating   TOTAL
+  -------------------------------------------------------------------------------------------------------------------------
+    1  Camino Express Tue 13     11:00 17:25    6h25    76.49  0  Flex           26     100     100     100      90   83.70
+    2  VerdeBus       Mon 12     10:30 17:35    7h05    69.99  0  Flex           37      60     100     100      82   80.69
+    3  Camino Express Mon 12     11:00 17:25    6h25    82.49  0  Flex           16     100     100     100      78   79.88
+    4  VerdeBus       Tue 13     13:30 20:35    7h05    78.49  0  Flex           23      60     100     100      65   75.30
+    5  VerdeBus       Wed 14     08:00 15:05    7h05    72.99  0  Flex           32      60      50     100      82   74.72
+  ... 34 more offer(s) not shown (use --top)
+
+  Camino Express Tue 13 Jul 11:00 -> Malaga (Flex) ranks first with 83.70 of 100 points among 39 acceptable offer(s).
+  Advantages: Flex fare: free changes, full refund; customer rating 4.6 of 5; the fastest acceptable journey (6 h 25 min).
+  Disadvantages: higher price (EUR 76.49, EUR 45.50 more than the cheapest).
+  It leads #2 (VerdeBus Mon 12 Jul 10:30 -> Malaga (Flex)) by 3.01 points, gaining on duration (+4.0), rating (+1.1) while losing on price (-2.1).
+
+==============================================================================
+ENVIRONMENT-FOCUSED TRAVELLER (eco)
+  Prefers verified low emissions and daytime travel.
+  Weights: price 20%, duration 15%, departure 10%, flexibility 10%, emissions 45%
+  Preferred departure: morning (06:00-12:00). Extra hard constraints: none.
+  Acceptable offers: 42 of 46 on this route and dates
+
+    #  Company        Date       Dep   Arr      Time      EUR Tr  Fare        Price     Dur DepTime    Flex     CO2   TOTAL
+  -------------------------------------------------------------------------------------------------------------------------
+    1  VerdeBus       Mon 12     10:30 17:35    7h05    53.99  0  Standard       60      60     100      60     100   82.03
+    2  VerdeBus       Mon 12     10:30 17:35    7h05    69.99  0  Flex           35      60     100     100     100   81.03
+    3  VerdeBus       Wed 14     08:00 15:05    7h05    72.99  0  Flex           30      60     100     100     100   80.09
+    4  VerdeBus       Wed 14     08:00 15:05    7h05    66.49  0  Standard       41      60     100      60     100   78.12
+    5  VerdeBus       Tue 13     13:30 20:35    7h05    55.99  0  Standard       57      60      62      60     100   77.66
+  ... 37 more offer(s) not shown (use --top)
+
+  VerdeBus Mon 12 Jul 10:30 -> Malaga (Standard) ranks first with 82.03 of 100 points among 42 acceptable offer(s).
+  Advantages: lowest emissions (5.8 kg CO2); departs at 10:30, inside your preferred morning window.
+  Disadvantages: none of its weighted criteria scores below 40.
+  It leads #2 (VerdeBus Mon 12 Jul 10:30 -> Malaga (Flex)) by 1.00 points, gaining on price (+5.0) while losing on flexibility (-4.0).
+
+==============================================================================
+SUMMARY: recommended offer per profile (Madrid -> Malaga)
+Profile    Company         Date    Dep   Time      EUR Tr  Fare        CO2   Total
+----------------------------------------------------------------------------------
+budget     SolRuta         Tue 13  17:00 7h25    31.49  0  Basic      18.0   78.42
+business   Camino Express  Wed 14  06:30 6h25    87.99  0  Flex       15.4   90.84
+flexible   Camino Express  Tue 13  11:00 6h25    76.49  0  Flex       15.4   83.70
+eco        VerdeBus        Mon 12  10:30 7h05    53.99  0  Standard    5.8   82.03
+4 different offer(s) recommended for 4 profile(s).
+
+Rank of each profile's winner under every profile (- = removed by that profile's hard constraints):
+Winner of      budget  business  flexible       eco
+budget             #1         -         -       #33
+business          #39        #1        #8       #16
+flexible          #26        #4        #1       #11
+eco               #18       #15        #9        #1

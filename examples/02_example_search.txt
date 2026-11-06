@@ -1,0 +1,38 @@
+02 EXAMPLE REQUEST FROM THE SPECIFICATION
+
+HARD CONSTRAINTS (offers that break these are removed)
+  - Destination: Madrid to Malaga
+  - Travel date: 12 Jul to 14 Jul 2027
+  - Seats needed: 1
+  - Maximum price per ticket: EUR 50.00
+  - Maximum transfers: 1
+  - Ticket must be changeable
+SOFT PREFERENCES (only affect the score)
+  - Preferred departure: morning (06:00-12:00)
+  - Weights: price 40%, duration 25%, departure 15%, flexibility 20%
+
+Offers on this route in the travel window: 46
+  removed by seats: 4
+  removed by budget: 24
+  removed by changeable: 10
+Offers that satisfy every hard constraint: 8
+
+  #  Company        Date       Dep   Arr      Time      EUR Tr  Fare        Price     Dur DepTime    Flex   TOTAL
+-----------------------------------------------------------------------------------------------------------------
+  1  SolRuta        Wed 14     10:00 18:20    8h20    36.99  1  Standard      100      46     100      30   72.61
+  2  SolRuta        Mon 12     10:00 18:35    8h35    37.99  1  Standard       92      36     100      30   66.85
+  3  CostaLink      Wed 14     09:30 16:35    7h05    45.49  0  Standard       35     100     100      50   63.85
+  4  CostaLink      Tue 13     09:30 16:35    7h05    45.99  0  Standard       31     100     100      50   62.31
+  5  NocheVia       Tue 13     21:30 06:15+1  8h45    38.99  0  Standard       85      29       0      50   50.99
+  6  SolRuta        Tue 13     17:00 00:25+1  7h25    43.49  0  Standard       50      86       0      30   47.43
+  7  CostaLink      Wed 14     13:00 20:05    7h05    49.99  0  Standard        0     100      75      50   46.25
+  8  NocheVia       Mon 12     22:15 07:40+1  9h25    40.49  0  Standard       73       0       0      50   39.23
+Scores are 0-100 per criterion (Price = price, Dur = duration, DepTime = departure, Flex = flexibility). TOTAL is the weighted sum. +1 = arrives next day.
+What actually separated the offers: price 42%, duration 29%, departure 22%, flexibility 6%
+
+WHY THIS RECOMMENDATION
+  SolRuta Wed 14 Jul 10:00 -> Malaga (Standard) ranks first with 72.61 of 100 points among 8 acceptable offer(s).
+  Advantages: the cheapest acceptable offer (EUR 36.99); departs at 10:00, inside your preferred morning window.
+  Disadvantages: Standard fare: changes cost EUR 8.00, non-refundable.
+  It leads #2 (SolRuta Mon 12 Jul 10:00 -> Malaga (Standard)) by 5.76 points, gaining on price (+3.1), duration (+2.7).
+  This is the best match only under the selected hard constraints, weights and scoring assumptions, not an objective judgement of the offers.

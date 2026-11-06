@@ -1,0 +1,19 @@
+06 MISSING EMISSIONS: SCORED AS WORST (0) VERSUS NEUTRAL (50)
+Eco profile, 12-14 July. NocheVia does not report CO2.
+
+Route   Best NocheVia rank (worst)   (neutral)              Winner (worst)            Winner (neutral)
+ALI                             39          32     VER-ALI-20270713-1030-S     VER-ALI-20270713-1030-S
+BAR                             44          26     VER-BAR-20270713-1030-F     VER-BAR-20270713-1030-F
+BIL                             40          23     VER-BIL-20270714-1030-S     VER-BIL-20270714-1030-S
+CAD                             41          26     VER-CAD-20270712-0800-F     VER-CAD-20270712-0800-F
+COR                             39          17     VER-COR-20270714-1030-S     VER-COR-20270714-1030-S
+GRA                             38          22     VER-GRA-20270712-1030-S     VER-GRA-20270712-1030-S
+MAL                             39          29     VER-MAL-20270712-1030-S     VER-MAL-20270712-1030-S
+MUR                             35          13     VER-MUR-20270713-1030-S     VER-MUR-20270713-1030-S
+SAL                             37          22     VER-SAL-20270712-1030-S     VER-SAL-20270712-1030-S
+SCQ                             41          18     VER-SCQ-20270712-1330-S     VER-SCQ-20270712-1330-S
+SEV                             31          25     VER-SEV-20270712-0800-S     VER-SEV-20270712-0800-S
+SSB                             49          29     VER-SSB-20270713-1030-F     VER-SSB-20270713-1030-F
+TOL                             35          19     VER-TOL-20270714-1030-S     VER-TOL-20270714-1030-S
+VAL                             45          35     VER-VAL-20270714-1030-F     VER-VAL-20270714-1030-F
+ZAR                             25          12     VER-ZAR-20270713-1030-S     VER-ZAR-20270713-1030-S

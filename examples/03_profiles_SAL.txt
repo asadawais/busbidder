@@ -1,0 +1,102 @@
+03 TRAVELLER PROFILES: MADRID -> SALAMANCA, 12-14 JULY 2027
+
+==============================================================================
+BUDGET TRAVELLER (budget)
+  Wants the lowest price and accepts a long or indirect journey.
+  Weights: price 55%, duration 15%, departure 10%, flexibility 10%, transfers 10%
+  Preferred departure: none. Extra hard constraints: none.
+  Acceptable offers: 42 of 42 on this route and dates
+
+    #  Company        Date       Dep   Arr      Time      EUR Tr  Fare        Price     Dur DepTime    Flex  Transf   TOTAL
+  -------------------------------------------------------------------------------------------------------------------------
+    1  SolRuta        Tue 13     12:30 15:40    3h10    13.99  0  Basic         100      83     100       0     100   87.41
+    2  SolRuta        Wed 14     12:30 15:40    3h10    14.49  0  Basic          98      83     100       0     100   86.11
+    3  SolRuta        Wed 14     15:00 18:10    3h10    14.49  0  Basic          98      83     100       0     100   86.11  (tie)
+    4  SolRuta        Tue 13     12:30 15:40    3h10    16.99  0  Standard       86      83     100      30     100   82.55
+    5  SolRuta        Mon 12     17:00 20:10    3h10    16.49  0  Basic          88      83     100       0     100   80.87
+  ... 37 more offer(s) not shown (use --top)
+
+  SolRuta Tue 13 Jul 12:30 -> Salamanca (Basic) ranks first with 87.41 of 100 points among 42 acceptable offer(s).
+  Advantages: the cheapest acceptable offer (EUR 13.99); direct route with no transfers; short journey (3 h 10 min, 25 min longer than the fastest).
+  Disadvantages: Basic fare: no changes allowed, non-refundable.
+  It leads #2 (SolRuta Wed 14 Jul 12:30 -> Salamanca (Basic)) by 1.30 points, gaining on price (+1.3).
+
+==============================================================================
+BUSINESS TRAVELLER (business)
+  Needs an early, fast, direct journey and a ticket that can be changed.
+  Weights: price 10%, duration 35%, departure 25%, flexibility 20%, transfers 10%
+  Preferred departure: 06:00-09:00. Extra hard constraints: must be changeable, max transfers 0.
+  Acceptable offers: 17 of 42 on this route and dates
+
+    #  Company        Date       Dep   Arr      Time      EUR Tr  Fare        Price     Dur DepTime    Flex  Transf   TOTAL
+  -------------------------------------------------------------------------------------------------------------------------
+    1  Camino Express Wed 14     06:30 09:15    2h45    33.99  0  Flex            6     100     100     100     100   90.56
+    2  Camino Express Tue 13     06:30 09:15    2h45    34.99  0  Flex            0     100     100     100     100   90.00
+    3  Camino Express Tue 13     06:30 09:15    2h45    28.49  0  Standard       36     100     100      30     100   79.61
+    4  Camino Express Wed 14     06:30 09:15    2h45    31.99  0  Standard       17     100     100      30     100   77.67
+    5  VerdeBus       Tue 13     10:30 13:30    3h00    30.49  0  Flex           25      62      62     100     100   70.00
+  ... 12 more offer(s) not shown (use --top)
+
+  Camino Express Wed 14 Jul 06:30 -> Salamanca (Flex) ranks first with 90.56 of 100 points among 17 acceptable offer(s).
+  Advantages: the fastest acceptable journey (2 h 45 min); departs at 06:30, inside your preferred 06:00-09:00 window; Flex fare: free changes, full refund.
+  Disadvantages: higher price (EUR 33.99, EUR 17.00 more than the cheapest).
+  It leads #2 (Camino Express Tue 13 Jul 06:30 -> Salamanca (Flex)) by 0.56 points, gaining on price (+0.6).
+
+==============================================================================
+FLEXIBILITY-FOCUSED TOURIST (flexible)
+  Plans may change, so free changes and refunds matter most. Brings a suitcase.
+  Weights: price 20%, duration 10%, departure 10%, flexibility 45%, rating 15%
+  Preferred departure: 10:00-14:00. Extra hard constraints: min luggage bags 1.
+  Acceptable offers: 36 of 42 on this route and dates
+
+    #  Company        Date       Dep   Arr      Time      EUR Tr  Fare        Price     Dur DepTime    Flex  Rating   TOTAL
+  -------------------------------------------------------------------------------------------------------------------------
+    1  VerdeBus       Mon 12     10:30 13:30    3h00    31.99  0  Flex           15      90     100     100      88   80.09
+    2  VerdeBus       Tue 13     10:30 13:30    3h00    30.49  0  Flex           22      90     100     100      75   79.72
+    3  VerdeBus       Wed 14     13:30 16:30    3h00    34.49  0  Flex            2      90     100     100      85   77.22
+    4  Camino Express Mon 12     14:00 17:35    3h35    33.49  1  Flex            8      66     100     100      88   76.18
+    5  Camino Express Mon 12     11:00 14:45    3h45    32.49  1  Flex           12      59     100     100      80   75.36
+  ... 31 more offer(s) not shown (use --top)
+
+  VerdeBus Mon 12 Jul 10:30 -> Salamanca (Flex) ranks first with 80.09 of 100 points among 36 acceptable offer(s).
+  Advantages: Flex fare: free changes, full refund; customer rating 4.5 of 5; departs at 10:30, inside your preferred 10:00-14:00 window.
+  Disadvantages: higher price (EUR 31.99, EUR 17.00 more than the cheapest).
+  It leads #2 (VerdeBus Tue 13 Jul 10:30 -> Salamanca (Flex)) by 0.37 points, gaining on rating (+1.9) while losing on price (-1.5).
+
+==============================================================================
+ENVIRONMENT-FOCUSED TRAVELLER (eco)
+  Prefers verified low emissions and daytime travel.
+  Weights: price 20%, duration 15%, departure 10%, flexibility 10%, emissions 45%
+  Preferred departure: morning (06:00-12:00). Extra hard constraints: none.
+  Acceptable offers: 42 of 42 on this route and dates
+
+    #  Company        Date       Dep   Arr      Time      EUR Tr  Fare        Price     Dur DepTime    Flex     CO2   TOTAL
+  -------------------------------------------------------------------------------------------------------------------------
+    1  VerdeBus       Mon 12     10:30 13:30    3h00    25.99  0  Standard       43      90     100      60     100   83.02
+    2  VerdeBus       Tue 13     10:30 13:30    3h00    25.99  0  Standard       43      90     100      60     100   83.02  (tie)
+    3  VerdeBus       Tue 13     10:30 13:30    3h00    30.49  0  Flex           21      90     100     100     100   82.73
+    4  VerdeBus       Mon 12     10:30 13:30    3h00    31.99  0  Flex           14      90     100     100     100   81.31
+    5  VerdeBus       Wed 14     13:30 16:30    3h00    27.99  0  Standard       33      90      62      60     100   77.36
+  ... 37 more offer(s) not shown (use --top)
+
+  VerdeBus Mon 12 Jul 10:30 -> Salamanca (Standard) ranks first with 83.02 of 100 points among 42 acceptable offer(s).
+  Advantages: lowest emissions (2.4 kg CO2); short journey (3 h, 15 min longer than the fastest); departs at 10:30, inside your preferred morning window.
+  Disadvantages: none of its weighted criteria scores below 40.
+  It has the same total as #2 (VerdeBus Tue 13 Jul 10:30 -> Salamanca (Standard)) and is placed first by the tie-break (lower price, then shorter journey, then earlier departure).
+
+==============================================================================
+SUMMARY: recommended offer per profile (Madrid -> Salamanca)
+Profile    Company         Date    Dep   Time      EUR Tr  Fare        CO2   Total
+----------------------------------------------------------------------------------
+budget     SolRuta         Tue 13  12:30 3h10    13.99  0  Basic       7.3   87.41
+business   Camino Express  Wed 14  06:30 2h45    33.99  0  Flex        6.2   90.56
+flexible   VerdeBus        Mon 12  10:30 3h00    31.99  0  Flex        2.4   80.09
+eco        VerdeBus        Mon 12  10:30 3h00    25.99  0  Standard    2.4   83.02
+4 different offer(s) recommended for 4 profile(s).
+
+Rank of each profile's winner under every profile (- = removed by that profile's hard constraints):
+Winner of      budget  business  flexible       eco
+budget             #1         -         -       #12
+business          #34        #1        #6        #7
+flexible          #31        #6        #1        #4
+eco               #24        #7        #7        #1
