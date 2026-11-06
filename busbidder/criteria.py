@@ -38,10 +38,12 @@ criterion is one decorated function and becomes usable in weights at once.
 
 from __future__ import annotations
 
+import dataclasses
 import statistics
+from contextlib import contextmanager
 from dataclasses import dataclass
 from enum import Enum
-from typing import Callable, Dict, List, Optional, Sequence
+from typing import Any, Callable, Dict, Iterator, List, Optional, Sequence
 
 from . import config
 from .models import ChangePolicy, Offer, RefundPolicy
@@ -68,10 +70,11 @@ class MissingPolicy(str, Enum):
 class RelativeScale:
     lower_is_better: bool
     min_range: float
+    use_fences: bool = True  # can be switched off for the normalisation experiment
 
     def bounds(self, values: Sequence[float]) -> tuple:
         lo, hi = min(values), max(values)
-        if len(values) >= 4:
+        if self.use_fences and len(values) >= 4:
             q1, _, q3 = statistics.quantiles(values, n=4, method="inclusive")
             iqr = q3 - q1
             lo = max(lo, q1 - 1.5 * iqr)
@@ -89,13 +92,16 @@ class RelativeScale:
             return lambda x: 0.0
         lo, hi = self.bounds(values)
         span = hi - lo
+        if span <= 0:  # all values equal and no minimum range: nothing to separate
+            return lambda x: 100.0
         if self.lower_is_better:
             return lambda x: clamp((hi - x) / span * 100)
         return lambda x: clamp((x - lo) / span * 100)
 
     def describe(self) -> str:
         direction = "lower is better" if self.lower_is_better else "higher is better"
-        return f"relative min-max with outlier fences, {direction}, minimum range {self.min_range:g}"
+        fences = "with outlier fences" if self.use_fences else "without outlier fences"
+        return f"relative min-max {fences}, {direction}, minimum range {self.min_range:g}"
 
 
 @dataclass(frozen=True)
@@ -144,6 +150,22 @@ def criterion(name: str, *, label: str, unit: str, description: str, scale: obje
 
 def get_criterion(name: str) -> Criterion:
     return _REGISTRY[name]
+
+
+@contextmanager
+def overridden(name: str, **changes: Any) -> Iterator[Criterion]:
+    """Temporarily change a registered criterion, e.g. its scale or missing policy.
+
+    Used by the experiments to measure how much a design decision matters
+    (for example: emissions missing -> worst vs neutral). The original is
+    always restored, even if an error occurs.
+    """
+    original = _REGISTRY[name]
+    _REGISTRY[name] = dataclasses.replace(original, **changes)
+    try:
+        yield _REGISTRY[name]
+    finally:
+        _REGISTRY[name] = original
 
 
 def registered_criteria() -> List[Criterion]:
