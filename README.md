@@ -175,3 +175,11 @@ stored fare conditions (full 100%, partial 50%, none 0%).
 | `examples/05_normalisation.txt` | effect of outlier fences and minimum range |
 | `examples/06_missing_emissions.txt` | missing CO2 scored as worst versus neutral |
 | `examples/07_company_wins.txt` / `.csv` | which companies win across all routes and profiles |
+
+## Declarations
+
+### Declaration of AI use
+
+I used Claude (Anthropic) as a supporting tool during parts of the project. It was used to help clarify programming concepts, improve code structure and documentation, assist with identifying appropriate classification thresholds and improve the wording and organisation of the README. The implementation, testing, interpretation of results and final design decisions were carried out by me. I reviewed, tested and critically assessed all AI-assisted suggestions before including them in the final work.
+
+
