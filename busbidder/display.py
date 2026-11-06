@@ -6,7 +6,7 @@ page) could reuse the search and ranking code without the printing.
 
 from __future__ import annotations
 
-from typing import List
+from typing import List, Optional
 
 from .booking import Booking, confirmation_lines
 from .criteria import get_criterion
@@ -78,6 +78,17 @@ def format_ranking(result: SearchResult, top: int = 10) -> List[str]:
         parts = ", ".join(f"{name} {share:.0%}" for name, share in
                           sorted(influence.items(), key=lambda kv: -kv[1]))
         lines.append(f"What actually separated the offers: {parts}")
+    return lines
+
+
+def format_search(result: SearchResult, destination_name: str, top: int = 10,
+                  profile_id: Optional[str] = None) -> List[str]:
+    """Everything printed for one search: request, filter summary, ranking, explanation."""
+    lines: List[str] = [f"Profile: {profile_id}"] if profile_id else []
+    lines += format_request(result, destination_name) + [""]
+    lines += result.filtered.summary_lines() + [""]
+    lines += format_ranking(result, top) + [""]
+    lines += format_explanation(explain(result))
     return lines
 
 

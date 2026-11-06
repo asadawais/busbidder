@@ -1,5 +1,9 @@
 """Command-line interface.
 
+Running ``python3 -m busbidder`` with no command starts a guided,
+question-by-question mode (see ``interactive.py``). The commands below are
+for direct use and scripting.
+
 Commands
 --------
 validate   check the data files and show what was rejected, corrected or held back
@@ -17,7 +21,7 @@ import dataclasses
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Callable, Optional, Sequence
+from typing import Optional, Sequence
 
 from . import config
 from .booking import BookingManager
@@ -25,23 +29,18 @@ from .display import (
     format_booking,
     format_booking_list,
     format_compare,
-    format_explanation,
-    format_ranking,
-    format_request,
+    format_search,
 )
-from .exceptions import BookingError, BusBidderError, InvalidRequestError
-from .explain import explain
+from .exceptions import BusBidderError, InvalidRequestError
+from .interactive import InputFn, choose_and_book, run_interactive
 from .loader import load_marketplace
 from .logging_setup import configure_logging
 from .models import Marketplace
 from .profiles import compare_profiles, load_profiles, select_profiles
-from .ranking import SearchResult, search
+from .ranking import search
 from .request import TimeWindow, TravelRequest
 from .validation import Action
 from .weights import Weights
-
-InputFn = Callable[[str], str]
-
 
 def _print(lines) -> None:
     for line in lines:
@@ -107,39 +106,6 @@ def cmd_validate(args: argparse.Namespace) -> int:
     return 0
 
 
-def _choose_and_book(result: SearchResult, manager: BookingManager,
-                     ask: InputFn, profile_id: Optional[str]) -> int:
-    """Let the traveller pick a ranked offer and book it."""
-    count = len(result.ranked)
-    while True:
-        answer = ask(f"\nEnter the rank (1-{count}) of the offer to book, or press Enter "
-                     "to skip: ").strip()
-        if not answer:
-            print("No booking made.")
-            return 0
-        if answer.isdigit() and 1 <= int(answer) <= count:
-            chosen = result.ranked[int(answer) - 1]
-            break
-        print(f"Please enter a number from 1 to {count}.")
-
-    _print(format_explanation(explain(result, chosen)) if chosen.rank > 1 else [])
-    while True:
-        name = ask("Passenger name: ")
-        ranking = {"rank": chosen.rank, "total": chosen.total,
-                   "weights": result.weights.describe(), "profile": profile_id}
-        try:
-            booking = manager.book(chosen.offer.offer_id, name, result.request.passengers,
-                                   ranking=ranking)
-        except BookingError as err:
-            print(f"Booking failed: {err}")
-            if "name" in str(err).lower():
-                continue
-            return 1
-        print()
-        _print(format_booking(booking))
-        return 0
-
-
 def cmd_search(args: argparse.Namespace, ask: Optional[InputFn] = None) -> int:
     ask = ask or input  # looked up at call time so tests can replace input()
     market, manager = _open(args)
@@ -159,17 +125,9 @@ def cmd_search(args: argparse.Namespace, ask: Optional[InputFn] = None) -> int:
 
     result = search(market, request, weights)
     destination = market.destinations[request.destination].name
-    if profile_id:
-        print(f"Profile: {profile_id}")
-    _print(format_request(result, destination))
-    print()
-    _print(result.filtered.summary_lines())
-    print()
-    _print(format_ranking(result, args.top))
-    print()
-    _print(format_explanation(explain(result)))
+    _print(format_search(result, destination, args.top, profile_id))
     if args.book and result.ranked:
-        return _choose_and_book(result, manager, ask, profile_id)
+        return choose_and_book(result, manager, ask, profile_id)
     return 0
 
 
@@ -281,9 +239,19 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
+    argv = list(sys.argv[1:] if argv is None else argv)
+    configure_logging(config.LOG_FILE)
+    if not argv:
+        try:
+            return run_interactive(config.DATA_DIR, config.DATA_DIR / "profiles.json")
+        except BusBidderError as err:
+            print(f"Error: {err}", file=sys.stderr)
+            return 1
+        except (KeyboardInterrupt, EOFError):
+            print("\nGoodbye.")
+            return 0
     parser = build_parser()
     args = parser.parse_args(argv)
-    configure_logging(config.LOG_FILE)
     try:
         return args.func(args)
     except BusBidderError as err:
