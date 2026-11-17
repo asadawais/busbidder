@@ -14,6 +14,7 @@ Experiments
 05 normalisation    effect of outlier fences and minimum range (ablation)
 06 missing CO2      emissions missing scored as worst (0) vs neutral (50)
 07 company wins     which companies win across all routes and profiles
+08 rank reversal    removing one offer changes the order of the others
 """
 
 from __future__ import annotations
@@ -31,7 +32,7 @@ from .display import format_compare, format_search
 from .loader import load_marketplace
 from .models import Marketplace
 from .profiles import compare_profiles, load_profiles
-from .ranking import search
+from .ranking import Ranker, search
 from .request import TimeWindow, TravelRequest
 from .weights import Weights
 
@@ -227,6 +228,41 @@ def summarise_company_wins(rows: List[Dict[str, object]], market: Marketplace) -
     return lines
 
 
+# --- 08 ---------------------------------------------------------------------------
+
+
+def exp_rank_reversal(market: Marketplace) -> List[str]:
+    """Relative scales depend on which offers are present. Remove each acceptable
+    offer of the example request in turn and report when the order of the
+    remaining offers changes."""
+    request = example_request()
+    weights = Weights.default()
+    result = search(market, request, weights)
+    base = [r.offer.offer_id for r in result.ranked]
+    lines = ["08 RANK REVERSAL: REMOVE ONE OFFER, RE-RANK THE REST (example request)", "",
+             "Original order:"]
+    lines += [f"  #{r.rank} {r.offer.offer_id:<26} {r.offer.duration_min:>4} min  "
+              f"EUR {r.offer.price_eur:6.2f}  total {r.total:6.2f}" for r in result.ranked]
+    changed = 0
+    for removed in result.ranked:
+        rest = [r.offer for r in result.ranked if r is not removed]
+        reranked = Ranker(weights).rank(rest, request)
+        new = [r.offer.offer_id for r in reranked]
+        expected = [b for b in base if b != removed.offer.offer_id]
+        if new != expected:
+            changed += 1
+            lines.append("")
+            lines.append(f"Removing #{removed.rank} {removed.offer.offer_id} changes the order:")
+            for r in reranked:
+                old = base.index(r.offer.offer_id) + 1
+                note = "" if old - (old > removed.rank) == r.rank else f"  (was #{old})"
+                lines.append(f"  #{r.rank} {r.offer.offer_id:<26} total {r.total:6.2f}{note}")
+    lines.append("")
+    lines.append(f"{changed} of {len(result.ranked)} removals change the order of the "
+                 "remaining offers.")
+    return lines
+
+
 # --- runner -------------------------------------------------------------------------
 
 
@@ -276,6 +312,7 @@ def run_all(out_dir: Path = EXAMPLES_DIR, data_dir: Optional[Path] = None) -> Li
     _write_csv(out_dir / "07_company_wins.csv", wins)
     written.append(out_dir / "07_company_wins.csv")
     lines("07_company_wins.txt", summarise_company_wins(wins, market))
+    lines("08_rank_reversal.txt", exp_rank_reversal(market))
     return written
 
 

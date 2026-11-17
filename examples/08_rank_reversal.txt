@@ -1,0 +1,22 @@
+08 RANK REVERSAL: REMOVE ONE OFFER, RE-RANK THE REST (example request)
+
+Original order:
+  #1 SOL-MAL-20270714-1000-S     500 min  EUR  36.99  total  72.61
+  #2 SOL-MAL-20270712-1000-S     515 min  EUR  37.99  total  66.85
+  #3 CST-MAL-20270714-0930-S     425 min  EUR  45.49  total  63.85
+  #4 CST-MAL-20270713-0930-S     425 min  EUR  45.99  total  62.31
+  #5 NOC-MAL-20270713-2130-S     525 min  EUR  38.99  total  50.99
+  #6 SOL-MAL-20270713-1700-S     445 min  EUR  43.49  total  47.43
+  #7 CST-MAL-20270714-1300-S     425 min  EUR  49.99  total  46.25
+  #8 NOC-MAL-20270712-2215-S     565 min  EUR  40.49  total  39.23
+
+Removing #8 NOC-MAL-20270712-2215-S changes the order:
+  #1 SOL-MAL-20270714-1000-S    total  67.25
+  #2 CST-MAL-20270714-0930-S    total  63.85  (was #3)
+  #3 CST-MAL-20270713-0930-S    total  62.31  (was #4)
+  #4 SOL-MAL-20270712-1000-S    total  60.42  (was #2)
+  #5 CST-MAL-20270714-1300-S    total  46.25  (was #7)
+  #6 SOL-MAL-20270713-1700-S    total  46.00
+  #7 NOC-MAL-20270713-2130-S    total  43.85  (was #5)
+
+1 of 8 removals change the order of the remaining offers.
