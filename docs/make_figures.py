@@ -1,11 +1,11 @@
-"""Draw the report figures from the saved experiment outputs in examples/.
+"""Draws the report figures from the saved results in examples/.
 
     python3 docs/make_figures.py
 
-This script is only used to produce images for the report. It needs
-matplotlib, which the application itself does not use (pip install matplotlib).
-It reads only the files in examples/, so the figures always match the
-evidence that ``python3 -m busbidder.experiments`` regenerates.
+Only used to make the images for the report. It needs matplotlib, which the
+app itself doesn't use (pip install matplotlib). It only reads the files in
+examples/, so the figures always match what python3 -m busbidder.experiments
+produces.
 """
 
 from __future__ import annotations
@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parent.parent
 EXAMPLES = ROOT / "examples"
 OUT = ROOT / "docs" / "figures"
 
-# Validated categorical palette (light mode), one fixed colour per company.
+# One fixed colour per company.
 COMPANY_COLOURS = {
     "SolRuta": "#2a78d6",
     "Camino Express": "#eb6834",
@@ -71,14 +71,14 @@ def weight_sweep() -> Path:
         ax.scatter(xi, yi, s=46, color=COMPANY_COLOURS[r["company"]], zorder=3,
                    edgecolors=SURFACE, linewidths=1.5)
 
-    # One direct label per run of identical winners
+    # one label per run of the same winner
     runs = []
     for r, xi, yi in zip(rows, x, y):
         if runs and runs[-1]["winner"] == r["winner"]:
             runs[-1]["x"].append(xi)
         else:
             runs.append({"winner": r["winner"], "x": [xi], "y": yi, "row": r})
-    # Label placement per run, chosen so no label touches a line or another label
+    # where to put each label so it doesn't touch a line or another label
     placements = [((0, 9), "center", "bottom"), ((0, 9), "center", "bottom"),
                   ((6, 6), "left", "bottom"), ((0, -10), "center", "top")]
     for i, run in enumerate(runs):

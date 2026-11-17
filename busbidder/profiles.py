@@ -1,14 +1,14 @@
-"""Traveller profiles loaded from ``data/profiles.json``.
+"""Traveller profiles from data/profiles.json.
 
-A profile bundles weights, a preferred departure window and optional extra
-hard constraints. Applying a profile to a base trip (destination and dates)
-produces a full ``TravelRequest`` and ``Weights``. Running several profiles
-on the same base trip shows how the same offers can lead to different
-recommendations for different travellers.
+A profile has weights, a preferred departure window and some optional extra
+hard constraints. Applying it to a base trip (destination and dates) gives a
+full TravelRequest and Weights. Running several profiles on the same trip
+shows how the same offers can give different recommendations for different
+travellers.
 
-When the base trip and the profile both set the same constraint, the stricter
-value is used (lower price, fewer transfers, more bags, shorter journey). A
-profile can therefore only narrow the base trip, never widen it.
+If the trip and the profile set the same constraint, the stricter value wins
+(lower price, fewer transfers, more bags, shorter journey). So a profile can
+only narrow the trip, never widen it.
 """
 
 from __future__ import annotations
@@ -28,7 +28,7 @@ from .weights import Weights
 
 PROFILES_FILE = config.DATA_DIR / "profiles.json"
 
-# Constraint keys a profile may set, with how to combine with the base trip.
+# Constraints a profile can set and how each one is combined with the base trip.
 _STRICTER = {
     "max_price_eur": min,
     "max_transfers": min,
@@ -126,11 +126,11 @@ def compare_profiles(market: Marketplace, base: TravelRequest,
 
 
 def cross_ranks(results: List[ProfileResult]) -> Dict[str, Dict[str, Optional[int]]]:
-    """For each profile's winner, its rank under every profile (None = excluded).
+    """For each profile's winner, find its rank under every profile (None if removed).
 
-    Shows how strongly the recommendation depends on who is travelling: an
-    offer can win for one traveller and be filtered out or ranked low for
-    another, even though the underlying offers are the same.
+    This shows how much the recommendation depends on who is travelling. An
+    offer can win for one traveller and be removed or ranked low for another,
+    even though the offers are the same.
     """
     table: Dict[str, Dict[str, Optional[int]]] = {}
     for owner in results:

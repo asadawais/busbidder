@@ -1,17 +1,16 @@
-"""The traveller's request: hard constraints plus soft preferences.
+"""The traveller's request: hard constraints and soft preferences.
 
-Hard constraints (an offer that violates one is removed before ranking):
-    destination, travel window, maximum ticket price, seats for all passengers,
-    maximum transfers, changeable ticket, refundable ticket, minimum checked
-    bags, maximum journey duration.
+Hard constraints remove an offer before ranking: destination, travel dates,
+max ticket price, seats for all passengers, max transfers, changeable ticket,
+refundable ticket, minimum checked bags and max journey time.
 
-Soft preferences (only influence the score, never remove an offer):
-    preferred departure time window and the criterion weights.
+Soft preferences only change the score and never remove an offer: the
+preferred departure window and the criterion weights.
 
-The split follows one rule: a hard constraint is something the traveller
-*cannot* accept being violated (cannot pay more, cannot travel another day,
-needs to be able to change the ticket). Anything that is "nicer if" is a
-preference and is traded off in the score.
+The rule I used: a hard constraint is something the traveller can't accept
+(can't pay more, can't go another day, must be able to change the ticket).
+Anything that is just "nicer if" is a preference and gets traded off in the
+score.
 """
 
 from __future__ import annotations
@@ -54,7 +53,7 @@ def _parse_clock(text: str) -> time:
 
 @dataclass(frozen=True)
 class TimeWindow:
-    """A preferred departure window. ``end`` before ``start`` wraps midnight."""
+    """Preferred departure window. If end is before start it goes past midnight."""
 
     start: time
     end: time
@@ -88,10 +87,10 @@ class TimeWindow:
         return self.start <= t <= self.end
 
     def minutes_outside(self, t: time) -> int:
-        """0 inside the window, otherwise minutes to the nearest edge.
+        """0 if inside the window, otherwise minutes to the closest edge.
 
-        Distances are measured around the clock, so 23:30 is 30 minutes
-        from a window starting at 00:00, not 23.5 hours.
+        Measured around the clock, so 23:30 is 30 minutes from a window that starts
+        at 00:00, not 23.5 hours.
         """
         if self.contains(t):
             return 0
@@ -139,7 +138,7 @@ class TravelRequest:
         if not 1 <= self.passengers <= MAX_PASSENGERS:
             raise InvalidRequestError(f"Passengers must be between 1 and {MAX_PASSENGERS}")
 
-    # --- descriptions shown to the user -------------------------------------
+    # Descriptions shown to the user
 
     def hard_constraint_lines(self, destination_name: Optional[str] = None) -> List[str]:
         dest = destination_name or self.destination

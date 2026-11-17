@@ -1,19 +1,16 @@
-"""Generate a plain-language explanation for a ranked offer.
+"""Builds a plain-language explanation for a ranked offer.
 
-The explanation is built only from the data: the offer's raw values, its
-criterion scores, the weights and the other acceptable offers. It names the
-offer's strongest and weakest criteria, says what separated it from the
-runner-up, flags missing data and ends with a reminder that the result
-depends on the chosen constraints, weights and scoring assumptions.
+The text only uses the data: the offer's values, its scores, the weights and
+the other accepted offers. It names the strongest and weakest criteria, says
+what separated it from number two, mentions missing data and ends with a
+reminder that the result depends on the chosen constraints, weights and
+scoring.
 
-Classification
---------------
-* strength: criterion score >= 70
-* weakness: criterion score <= 40
-Within each group the criteria are ordered by weight x score distance from
-neutral, so the points that mattered most for this traveller come first.
-Only criteria with a weight are considered, so the text always matches
-what the traveller said was important.
+A criterion counts as a strength if it scores 70 or more and as a weakness if
+it scores 40 or less. Inside each group they are sorted by weight x distance
+from 50, so the points that mattered most for this traveller come first.
+Only criteria with a weight are used, so the text matches what the traveller
+said was important.
 """
 
 from __future__ import annotations
@@ -130,7 +127,7 @@ def strengths_and_weaknesses(item: RankedOffer, result: SearchResult):
     ctx = _Context(result)
     scored = [s for s in item.scores.values() if s.weight > 0]
     if result.request.preferred_departure is None:
-        # Every departure scores 100 without a preference, so it is no advantage
+        # without a preference every departure gets 100, so it's not really an advantage
         scored = [s for s in scored if s.name != "departure"]
     strong = sorted((s for s in scored if s.score >= STRENGTH_THRESHOLD),
                     key=lambda s: -s.weight * (s.score - 50))
@@ -141,7 +138,7 @@ def strengths_and_weaknesses(item: RankedOffer, result: SearchResult):
 
 
 def _margin_line(item: RankedOffer, other: RankedOffer) -> str:
-    """Which criteria gave ``item`` its lead over ``other`` (weighted points)."""
+    """Which criteria gave item its lead over other, in weighted points."""
     diffs = {name: item.scores[name].contribution - other.scores[name].contribution
              for name in item.scores}
     gains = sorted(((n, d) for n, d in diffs.items() if d > 0.05), key=lambda kv: -kv[1])
@@ -160,7 +157,7 @@ def _margin_line(item: RankedOffer, other: RankedOffer) -> str:
 
 
 def explain(result: SearchResult, item: Optional[RankedOffer] = None) -> List[str]:
-    """Return explanation lines for ``item`` (default: the top-ranked offer)."""
+    """Return the explanation lines for item (the top offer by default)."""
     if not result.ranked:
         return []
     item = item or result.ranked[0]

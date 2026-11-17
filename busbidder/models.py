@@ -1,15 +1,14 @@
-"""Domain model for the marketplace.
+"""Domain model.
 
-Design notes
-------------
-* Plain dataclasses keep the model readable and easy to test.
-* Composition over inheritance: an ``Offer`` *has* a ``Company``, a
-  ``Destination`` and a ``FareConditions`` object. The companies do not need
-  their own subclasses because they differ in data (routes, prices, schedules),
-  not in behaviour.
-* Reference data (companies, destinations, fare conditions) is immutable
-  (``frozen=True``). Only ``Offer.seats_available`` changes, and only through
-  ``reserve_seats`` so capacity is always reduced in one controlled place.
+I used plain dataclasses because they are easy to read and test.
+
+An Offer has a Company, a Destination and a FareConditions object. The
+companies don't need their own subclasses since they only differ in data
+(routes, prices, schedules), not in behaviour.
+
+Companies, destinations and fare conditions are frozen. The only thing that
+changes is Offer.seats_available, and only through reserve_seats and
+release_seats, so seats are always changed in one place.
 """
 
 from __future__ import annotations
@@ -131,7 +130,7 @@ class Offer:
         return self.seats_available <= 0
 
     def reserve_seats(self, count: int = 1) -> None:
-        """Reduce capacity. The only place where seats are changed."""
+        """Take seats from the offer. This is the only place seats are reduced."""
         if count < 1:
             raise ValueError("count must be at least 1")
         if count > self.seats_available:
@@ -156,7 +155,7 @@ class Offer:
 
 @dataclass
 class Marketplace:
-    """In-memory collection of all valid reference data and offers."""
+    """All valid reference data and offers, kept in memory."""
 
     companies: Dict[str, Company] = field(default_factory=dict)
     destinations: Dict[str, Destination] = field(default_factory=dict)

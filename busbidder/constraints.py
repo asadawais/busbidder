@@ -1,16 +1,12 @@
 """Hard constraints and the filter that applies them.
 
-Metaprogramming: a registry decorator
--------------------------------------
-Each constraint is a small function decorated with ``@hard_constraint``.
-The decorator stores it in a module-level registry together with a
-description and a rule for when it applies. The filter simply loops over the
-registry, so adding a new constraint is a single decorated function and no
-other code has to change. The registry order is also the order in which
-removals are attributed in the summary shown to the user.
+Each constraint is a small function with the @hard_constraint decorator. The
+decorator adds it to a registry together with a description and a rule for
+when it applies. The filter just loops over the registry, so adding a new
+constraint only means writing one new function. The registry order is also
+the order used when counting removed offers in the summary.
 
-A constraint function returns ``None`` when the offer is acceptable and a
-short human-readable reason when it is not.
+A constraint returns None if the offer is OK, otherwise a short reason.
 """
 
 from __future__ import annotations
@@ -57,7 +53,7 @@ def active_constraints(request: TravelRequest) -> List[HardConstraint]:
     return [c for c in _REGISTRY.values() if c.applies(request)]
 
 
-# --- The constraints --------------------------------------------------------
+# Constraints
 
 
 @hard_constraint("destination", "Offer goes to the requested destination")
@@ -131,16 +127,16 @@ def _max_duration(offer: Offer, request: TravelRequest) -> Optional[str]:
     return None
 
 
-# --- Filtering --------------------------------------------------------------
+# Filtering
 
 
 @dataclass
 class FilterResult:
-    """Accepted offers plus a record of why every other offer was removed.
+    """The accepted offers and why every other offer was removed.
 
-    ``in_scope`` counts offers to the right destination inside the travel
-    window. Those are the offers the traveller could have chosen, so the
-    summary reports removals relative to that number.
+    in_scope is the number of offers to the right destination inside the travel
+    window, so the offers the traveller could have picked. The summary reports
+    removals out of this number.
     """
 
     accepted: List[Offer] = field(default_factory=list)
@@ -162,11 +158,10 @@ SCOPE_CONSTRAINTS = ("destination", "travel_window")
 
 
 def apply_constraints(offers: Iterable[Offer], request: TravelRequest) -> FilterResult:
-    """Split offers into acceptable and removed.
+    """Split offers into accepted and removed.
 
-    Every active constraint is checked so the full list of reasons is kept,
-    but each removed offer is counted once, under the first constraint it
-    fails in registry order.
+    All active constraints are checked so every reason is kept, but each removed
+    offer is only counted once, under the first constraint it fails.
     """
     constraints = active_constraints(request)
     result = FilterResult(removed_by={c.name: 0 for c in constraints})

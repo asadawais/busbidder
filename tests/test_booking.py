@@ -98,7 +98,7 @@ class TestBooking(BookingTestCase):
     def test_reference_collision_is_retried(self):
         manager = self.manager(seed=5)
         first = manager.book("SOL-MAL-20270712-0830-S", "Asad Awais").reference
-        # Same seed would produce the same reference again; it must be skipped
+        # the same seed gives the same reference again, so it has to be skipped
         manager.rng = random.Random(5)
         second = manager.book("SOL-MAL-20270712-0830-S", "Asad Awais").reference
         self.assertNotEqual(first, second)

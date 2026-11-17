@@ -39,7 +39,7 @@ class TestExperiments(unittest.TestCase):
 
     @unittest.skipUnless(EXAMPLES_DIR.exists(), "examples/ has not been generated yet")
     def test_saved_examples_match_a_fresh_run(self):
-        """The committed evidence in examples/ can be reproduced exactly."""
+        """The saved results in examples/ can be reproduced exactly."""
         with tempfile.TemporaryDirectory() as tmp:
             for path in run_all(Path(tmp)):
                 saved = EXAMPLES_DIR / path.name

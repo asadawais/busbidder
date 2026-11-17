@@ -1,27 +1,27 @@
-"""Field parsing and record validation.
+"""Parsing and validation of single records.
 
-Every raw record (a dict of strings from CSV or JSON) passes through a
-validator that converts the fields to proper types and checks them.
+Every raw record (a dict of strings from CSV or JSON) goes through a
+validator that converts the fields to the right types and checks them.
 
-Validation policy
------------------
-Each problem leads to exactly one of three outcomes:
+Every problem ends in one of three outcomes:
 
-* **Rejected**  - the record is impossible or unusable (negative price,
-  unknown destination, arrival before departure, rating outside 1-5,
-  malformed identifier, duplicate id, ...). It is excluded and written to
-  ``output/quarantine/rejected_offers.csv`` with the reason.
-* **Corrected** - the intended value is unambiguous, so it is fixed and the
-  record is kept (comma used as decimal separator, wrong letter case in a
-  category, stated duration that disagrees with the departure and arrival
-  times). Every correction is logged.
-* **Review**    - the record is possible but implausible (bus faster than
-  110 km/h on average, price above EUR 250). It is held back from travellers
-  and written to ``output/quarantine/review_offers.csv`` for a human to check.
+Rejected: the record is impossible or unusable (negative price, unknown
+destination, arrival before departure, rating outside 1-5, bad id, duplicate
+id and so on). It is left out and written to
+output/quarantine/rejected_offers.csv with the reason.
 
-Offers with zero seats are *valid* data (sold out). They are loaded and later
-removed by the seat-availability hard constraint, so the traveller can be told
-that a matching offer exists but is full.
+Corrected: it's clear what the value should be, so it is fixed and the
+record is kept (comma as decimal separator, wrong upper/lower case in a
+category, duration that doesn't match the departure and arrival times). All
+corrections are logged.
+
+Review: the record is possible but unlikely (average speed above 110 km/h,
+price above EUR 250). It is held back from travellers and written to
+output/quarantine/review_offers.csv so someone can check it.
+
+Offers with zero seats are valid (sold out). They are loaded and removed
+later by the seat constraint, so the traveller can be told that a matching
+offer exists but is full.
 """
 
 from __future__ import annotations
@@ -50,15 +50,15 @@ from .models import (
     RefundPolicy,
 )
 
-# --- Regular expressions for structured identifiers --------------------------
+# Regexes for ids and codes
 
 # Three upper-case letters, used for both company ids (SOL) and destination
 # codes (MAL).
 CODE_RE = re.compile(r"^[A-Z]{3}$")
 
-# Offer ids encode company, destination, date, departure time and fare class,
-# e.g. SOL-MAL-20270712-0830-B. Named groups let the validator cross-check the
-# id against the record's own fields.
+# Offer ids contain company, destination, date, departure time and fare class,
+# e.g. SOL-MAL-20270712-0830-B. The named groups are used to check the id
+# against the other fields in the record.
 OFFER_ID_RE = re.compile(
     r"^(?P<company>[A-Z]{3})-(?P<destination>[A-Z]{3})-"
     r"(?P<date>\d{8})-(?P<time>\d{4})-(?P<fare>[BSF])$"
@@ -125,12 +125,12 @@ class Issue:
         )
 
 
-# A correction is noted as (field, original value, message).
+# A correction is stored as (field, original value, message).
 Correction = Tuple[str, str, str]
 E = TypeVar("E", bound=Enum)
 
 
-# --- Field parsers ----------------------------------------------------------
+# Field parsers
 
 
 def required(row: Mapping[str, Any], name: str) -> str:
@@ -223,7 +223,7 @@ def parse_bool(value: Any, name: str) -> bool:
     raise InvalidValueError(name, value, "must be true/false or yes/no")
 
 
-# --- Reference data validators -----------------------------------------------
+# Validators for reference data
 
 
 def validate_company(raw: Mapping[str, Any]) -> Company:
@@ -247,15 +247,15 @@ def validate_destination(raw: Mapping[str, Any]) -> Destination:
     )
 
 
-# --- Offer validator ---------------------------------------------------------
+# Offer validator
 
 
 class OfferValidator:
-    """Converts a raw offer row into an ``Offer`` or raises a ``RecordError``.
+    """Turns a raw offer row into an Offer or raises a RecordError.
 
-    The checks run in a fixed order: identifiers and references first, then
-    types and ranges, then cross-field consistency, and plausibility last.
-    That way a record is only sent to review if it is otherwise valid.
+    The checks always run in the same order: ids and references, then types and
+    ranges, then fields that must agree with each other, and plausibility last.
+    That way a record only goes to review if everything else is fine.
     """
 
     def __init__(self, companies: Mapping[str, Company],
@@ -365,7 +365,7 @@ class OfferValidator:
             luggage_bags=luggage,
         )
 
-        # Optional values: missing is allowed and handled later by the scoring
+        # Optional values: can be missing, the scoring handles that later
         rating: Optional[float] = None
         rating_raw = optional(row, "rating")
         if rating_raw is not None:
@@ -383,7 +383,7 @@ class OfferValidator:
             if co2 < 0:
                 raise InvalidValueError("co2_kg", co2_raw, "emissions cannot be negative")
 
-        # Plausibility checks (possible, but needs a human to confirm)
+        # Plausibility checks (possible, but someone should look at it)
         hours = computed_duration / 60
         speed = destination.distance_km / hours
         if speed > config.MAX_PLAUSIBLE_SPEED_KMH:

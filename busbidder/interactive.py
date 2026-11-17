@@ -1,12 +1,12 @@
-"""Guided interactive mode: ``python3 -m busbidder`` with no arguments.
+"""Guided mode, started with python3 -m busbidder and no arguments.
 
 Asks one question at a time, shows which answers are hard constraints and
-which are preferences, re-asks when an answer is invalid, then shows the
-ranking and explanation and offers to book. Every question can be skipped
-with Enter where a sensible default exists.
+which are preferences, and asks again if an answer is invalid. Then it shows
+the ranking and explanation and lets the traveller book. Most questions can
+be skipped with Enter to use a default.
 
-``ask`` and ``say`` are injectable so the whole dialogue can be tested
-with scripted answers.
+ask and say can be swapped out so the whole dialogue can be tested with
+scripted answers.
 """
 
 from __future__ import annotations
@@ -39,7 +39,7 @@ class Dialogue:
         self.say = say
 
     def question(self, prompt: str, parse: Callable[[str], T], default: Optional[str] = None) -> T:
-        """Ask until ``parse`` accepts the answer. Empty input uses ``default``."""
+        """Keep asking until parse accepts the answer. Empty input gives default."""
         suffix = f" [{default}]" if default not in (None, "") else ""
         while True:
             answer = self.ask(f"{prompt}{suffix}: ").strip()
@@ -60,7 +60,7 @@ class Dialogue:
         return self.question(f"{prompt} (y/n)", parse, "y" if default else "n")
 
 
-# --- parsers that turn an answer into a value or raise ------------------------
+# Parsers that turn an answer into a value (or raise)
 
 
 def _optional(parse: Callable[[str], T]) -> Callable[[str], Optional[T]]:
@@ -95,7 +95,7 @@ def _offer_dates(market: Marketplace) -> Tuple[date, date]:
     return min(dates), max(dates)
 
 
-# --- the dialogue -------------------------------------------------------------
+# The dialogue
 
 
 def ask_destination(d: Dialogue, market: Marketplace) -> str:

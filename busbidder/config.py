@@ -1,7 +1,7 @@
-"""Central paths and constants.
+"""Paths and constants used across the project.
 
-Keeping file locations in one place means the loader, CLI and tests never
-hard-code paths, and a different data folder can be passed in when needed.
+All file locations are defined here so the loader, CLI and tests don't
+hard-code paths. A different data folder can be passed in when needed.
 """
 
 from __future__ import annotations
@@ -30,12 +30,12 @@ ORIGIN = "Madrid"
 RATING_MIN = 1.0
 RATING_MAX = 5.0
 
-# Thresholds that do not make a record impossible but suspicious enough that a
-# human should look at it before it is offered to travellers.
+# Not impossible, but suspicious enough that someone should check the record
+# before it is shown to travellers.
 MAX_PLAUSIBLE_SPEED_KMH = 110.0
 MAX_PLAUSIBLE_PRICE_EUR = 250.0
 
-# Tolerance when comparing the stated duration with the departure/arrival times.
+# Allowed difference between the stated duration and the departure/arrival times.
 DURATION_TOLERANCE_MIN = 1
 
 DEFAULT_SEED = 42

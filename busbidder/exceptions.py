@@ -1,12 +1,12 @@
-"""Custom exception hierarchy.
+"""Custom exceptions.
 
-Every error raised by the application derives from ``BusBidderError`` so the
-CLI can catch one base class and show a friendly message instead of a traceback.
+All errors in the app inherit from BusBidderError, so the CLI can catch that
+one class and show a readable message instead of a traceback.
 
-Record-level errors (``RecordError`` and subclasses) carry the field, the bad
-value and a message, so the loader can write a precise reason to the log and
-to the quarantine files. The subclass decides what happens to the record:
-most are rejected, ``SuspiciousRecordError`` is placed aside for review.
+Record errors (RecordError and its subclasses) store the field, the bad value
+and a message, so the loader can write the exact reason to the log and the
+quarantine files. The subclass decides what happens to the record. Most are
+rejected, but SuspiciousRecordError is put aside for review.
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ class BusBidderError(Exception):
     """Base class for all application errors."""
 
 
-# --- Files and configuration -------------------------------------------------
+# Files and configuration
 
 
 class DataFileError(BusBidderError):
@@ -33,7 +33,7 @@ class InvalidRequestError(BusBidderError):
     """A travel request from the user is invalid (bad dates, unknown city...)."""
 
 
-# --- Record validation ------------------------------------------------------
+# Record validation
 
 
 class RecordError(BusBidderError):
@@ -70,7 +70,7 @@ class SuspiciousRecordError(RecordError):
     """The record is possible but implausible and needs human review."""
 
 
-# --- Booking -----------------------------------------------------------------
+# Booking
 
 
 class BookingError(BusBidderError):

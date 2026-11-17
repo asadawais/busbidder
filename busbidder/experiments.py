@@ -1,18 +1,16 @@
-"""Reproducible experiments that produce the evidence used in the report.
+"""Experiments that produce the results used in the report.
 
 Run with:  python3 -m busbidder.experiments
 
-Every output is written to ``examples/``. The dataset is seeded and the
-ranking is deterministic, so running this again gives identical files.
+All output goes to examples/. The data is seeded and the ranking is
+deterministic, so running it again gives the same files.
 
-Experiments
------------
 01 validation       what the loader rejected, corrected and held back
-02 example search   the traveller request from the specification
+02 example search   the request from the specification
 03 profiles         four traveller profiles on three routes
-04 weight sweep     how the winner changes as the price weight grows
-05 normalisation    effect of outlier fences and minimum range (ablation)
-06 missing CO2      emissions missing scored as worst (0) vs neutral (50)
+04 weight sweep     how the winner changes when the price weight goes up
+05 normalisation    effect of the outlier fences and minimum range
+06 missing CO2      missing emissions scored as worst (0) vs neutral (50)
 07 company wins     which companies win across all routes and profiles
 08 rank reversal    removing one offer changes the order of the others
 """
@@ -52,7 +50,7 @@ def open_request(code: str) -> TravelRequest:
     return TravelRequest(code, FIRST, LAST, preferred_departure=TimeWindow.parse("morning"))
 
 
-# --- 01 ---------------------------------------------------------------------------
+# 01 Validation
 
 
 def exp_validation(data_dir: Path) -> List[str]:
@@ -64,7 +62,7 @@ def exp_validation(data_dir: Path) -> List[str]:
     return lines
 
 
-# --- 02 ---------------------------------------------------------------------------
+# 02 Example search
 
 
 def exp_example_search(market: Marketplace) -> List[str]:
@@ -73,7 +71,7 @@ def exp_example_search(market: Marketplace) -> List[str]:
             + format_search(result, "Malaga", top=20))
 
 
-# --- 03 ---------------------------------------------------------------------------
+# 03 Profiles
 
 
 def exp_profiles(market: Marketplace, profiles_file: Path, code: str) -> List[str]:
@@ -84,12 +82,15 @@ def exp_profiles(market: Marketplace, profiles_file: Path, code: str) -> List[st
             + format_compare(results, name, top=5))
 
 
-# --- 04 ---------------------------------------------------------------------------
+# 04 Weight sweep
 
 
 def exp_weight_sweep(market: Marketplace) -> List[Dict[str, object]]:
-    """Raise the price weight from 10% to 70%. The other three core criteria share
-    the rest in the default ratio 25:15:20, so only the emphasis on price changes."""
+    """Raise the price weight from 10% to 70%.
+
+    The other three core criteria split the rest 25:15:20 like in the default
+    weights, so only the price weight changes.
+    """
     rows = []
     for price_pct in range(10, 75, 5):
         rest = 100 - price_pct
@@ -115,7 +116,7 @@ def exp_weight_sweep(market: Marketplace) -> List[Dict[str, object]]:
     return rows
 
 
-# --- 05 ---------------------------------------------------------------------------
+# 05 Normalisation
 
 
 def _relative_variant(fences: bool, keep_min_range: bool):
@@ -161,7 +162,7 @@ def exp_normalisation(market: Marketplace) -> List[str]:
     return lines
 
 
-# --- 06 ---------------------------------------------------------------------------
+# 06 Missing CO2
 
 
 def exp_missing_emissions(market: Marketplace, profiles_file: Path) -> List[str]:
@@ -184,7 +185,7 @@ def exp_missing_emissions(market: Marketplace, profiles_file: Path) -> List[str]
     return lines
 
 
-# --- 07 ---------------------------------------------------------------------------
+# 07 Company wins
 
 
 def exp_company_wins(market: Marketplace, profiles_file: Path) -> List[Dict[str, object]]:
@@ -228,13 +229,15 @@ def summarise_company_wins(rows: List[Dict[str, object]], market: Marketplace) -
     return lines
 
 
-# --- 08 ---------------------------------------------------------------------------
+# 08 Rank reversal
 
 
 def exp_rank_reversal(market: Marketplace) -> List[str]:
-    """Relative scales depend on which offers are present. Remove each acceptable
-    offer of the example request in turn and report when the order of the
-    remaining offers changes."""
+    """Remove each accepted offer of the example request one at a time.
+
+    Relative scales depend on which offers are there, so this checks when the
+    order of the remaining offers changes.
+    """
     request = example_request()
     weights = Weights.default()
     result = search(market, request, weights)
@@ -263,7 +266,7 @@ def exp_rank_reversal(market: Marketplace) -> List[str]:
     return lines
 
 
-# --- runner -------------------------------------------------------------------------
+# Run all experiments
 
 
 def _write_lines(path: Path, lines: Sequence[str]) -> None:

@@ -1,9 +1,8 @@
-"""Logging configuration.
+"""Logging setup.
 
-All modules log through ``logging.getLogger(__name__)``. The application calls
-``configure_logging`` once at start-up, which sends everything from INFO and
-up to a log file. Only errors are echoed to the console, because the CLI
-prints its own readable summaries.
+Every module logs through logging.getLogger(__name__). configure_logging is
+called once at start-up and sends INFO and above to a log file. Only errors
+are shown in the console, because the CLI prints its own summaries.
 """
 
 from __future__ import annotations

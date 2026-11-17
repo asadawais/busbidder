@@ -1,39 +1,34 @@
-"""Scoring criteria and how each is normalised to a 0-100 scale.
+"""Scoring criteria and how each one is turned into a 0-100 score.
 
-Raw values cannot be added together (euros, minutes, categories), so every
-criterion converts its raw value to a score from 0 (worst) to 100 (best).
+Euros, minutes and categories can't be added together, so every criterion
+converts its raw value to a score from 0 (worst) to 100 (best).
 
-Two kinds of scale
-------------------
-* ``RelativeScale`` compares offers with each other (price, duration,
-  emissions). The best value among the acceptable offers scores 100.
-  Two safeguards stop it from exaggerating or hiding differences:
+There are two kinds of scales.
 
-  - **Outlier fences.** The scale's end points are clipped to the Tukey
-    fences (Q1 - 1.5*IQR, Q3 + 1.5*IQR) when there are at least four
-    values. One extreme offer then gets a score of 0 instead of squeezing
-    every other offer into the top of the scale.
-  - **Minimum range.** If all values are close (e.g. prices within EUR 2),
-    plain min-max would still spread them from 0 to 100 and let a trivial
-    difference dominate. The scale is widened to at least ``min_range``
-    (EUR 5, 30 min, 2 kg CO2), so small differences give small score gaps.
+RelativeScale compares the offers with each other (price, duration,
+emissions). The best value among the accepted offers gets 100. It has two
+safeguards:
+  - Outlier fences: with at least four values the end points are clipped to
+    the Tukey fences (Q1 - 1.5*IQR, Q3 + 1.5*IQR). One extreme offer then
+    gets 0 instead of pushing all the others up to the top.
+  - Minimum range: if all values are close (e.g. prices within EUR 2), plain
+    min-max would still spread them from 0 to 100. The scale is widened to at
+    least min_range (EUR 5, 30 min, 2 kg CO2) so small differences only give
+    small score gaps.
 
-* ``AbsoluteScale`` uses a fixed formula that does not depend on the other
-  offers (departure convenience, flexibility, transfers, rating). These have
-  a natural best and worst value, so a fixed scale is easier to explain.
+AbsoluteScale uses a fixed formula that doesn't depend on the other offers
+(departure, flexibility, transfers, rating). These have a natural best and
+worst value, which makes them easier to explain.
 
-Missing values
---------------
-``rating`` missing -> neutral 50 (an unrated company is not known to be bad).
-``emissions`` missing -> 0 (worst). A traveller who weights emissions wants
-*verified* low emissions, and unknown emissions are not evidence of that.
-Both choices are discussed in the report as possible sources of unfairness.
+Missing values:
+  - missing rating gives a neutral 50 (no rating doesn't mean the company is bad)
+  - missing emissions gives 0 (worst). Someone who weights emissions wants low
+    emissions that are actually reported, and unknown emissions don't show that.
+Both choices can be unfair, which I discuss in the report.
 
-Metaprogramming
----------------
-Criteria are registered with the ``@criterion`` decorator, the same pattern
-as the hard constraints. The ranking code only knows the registry, so a new
-criterion is one decorated function and becomes usable in weights at once.
+Criteria are registered with the @criterion decorator, the same way as the
+hard constraints. The ranking code only uses the registry, so a new criterion
+is one decorated function and can be used in the weights right away.
 """
 
 from __future__ import annotations
@@ -80,7 +75,7 @@ class RelativeScale:
             lo = max(lo, q1 - 1.5 * iqr)
             hi = min(hi, q3 + 1.5 * iqr)
         if hi - lo < self.min_range:
-            # Widen away from the best value, which keeps scoring 100.
+            # widen on the side away from the best value so the best still gets 100
             if self.lower_is_better:
                 hi = lo + self.min_range
             else:
@@ -92,7 +87,7 @@ class RelativeScale:
             return lambda x: 0.0
         lo, hi = self.bounds(values)
         span = hi - lo
-        if span <= 0:  # all values equal and no minimum range: nothing to separate
+        if span <= 0:  # all values are the same and there is no min range
             return lambda x: 100.0
         if self.lower_is_better:
             return lambda x: clamp((hi - x) / span * 100)
@@ -130,7 +125,7 @@ class Criterion:
 
 _REGISTRY: Dict[str, Criterion] = {}
 
-# The four criteria the specification requires in every ranking.
+# The four criteria that have to be in every ranking (from the spec).
 CORE_CRITERIA = ("price", "duration", "departure", "flexibility")
 
 
@@ -156,9 +151,9 @@ def get_criterion(name: str) -> Criterion:
 def overridden(name: str, **changes: Any) -> Iterator[Criterion]:
     """Temporarily change a registered criterion, e.g. its scale or missing policy.
 
-    Used by the experiments to measure how much a design decision matters
-    (for example: emissions missing -> worst vs neutral). The original is
-    always restored, even if an error occurs.
+    Used in the experiments to see how much a design choice matters (for example
+    missing emissions as worst vs neutral). The original is always put back,
+    even if something fails.
     """
     original = _REGISTRY[name]
     _REGISTRY[name] = dataclasses.replace(original, **changes)
@@ -176,11 +171,11 @@ def criterion_names() -> List[str]:
     return list(_REGISTRY)
 
 
-# --- Flexibility and transfer points (absolute, categorical) ----------------
+# Points for flexibility and transfers
 
 CHANGE_POINTS = {ChangePolicy.NONE: 0, ChangePolicy.FEE: 50, ChangePolicy.FREE: 100}
 REFUND_POINTS = {RefundPolicy.NONE: 0, RefundPolicy.PARTIAL: 50, RefundPolicy.FULL: 100}
-CHANGE_SHARE = 0.6  # changing a date matters more than getting money back
+CHANGE_SHARE = 0.6  # being able to change matters more than a refund
 TRANSFER_POINTS = {0: 100.0, 1: 60.0, 2: 25.0, 3: 0.0}
 DEPARTURE_ZERO_AFTER_MIN = 240  # 4 hours outside the window scores 0
 
@@ -191,7 +186,7 @@ def flexibility_points(offer: Offer) -> float:
     return CHANGE_SHARE * change + (1 - CHANGE_SHARE) * refund
 
 
-# --- The criteria ----------------------------------------------------------
+# Criteria
 
 
 @criterion("price", label="Price", unit="EUR",

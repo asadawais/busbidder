@@ -1,4 +1,4 @@
-"""Entry point: ``python -m busbidder``."""
+"""Lets the package run with python -m busbidder."""
 
 from .cli import main
 

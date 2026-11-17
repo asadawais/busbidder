@@ -1,26 +1,26 @@
-"""Seeded generator for the simulated BusBidder Spain dataset.
+"""Seeded generator for the simulated dataset.
 
 Run with:  python -m busbidder.data_generator --seed 42
 
-The same seed always produces byte-identical files, so every ranking in the
+The same seed always gives byte-identical files, so every ranking in the
 report can be reproduced.
 
-How the companies differ (design choices, see README/report):
+How the companies differ (see the README and the report):
 
 * SolRuta        - cheapest per km, daytime only, slower, often one transfer,
-                   Basic fares cannot be changed.
-* Camino Express - most expensive, fastest, direct to the major cities,
-                   Standard and Flex fares only.
-* CostaLink      - cheaper and direct to coastal cities, more departures on the
-                   coast, transfers (sometimes two) to inland cities.
-* VerdeBus       - modern low-emission fleet (lowest CO2), free changes on
-                   all fares, mid-price.
-* NocheVia       - evening/overnight departures, slow, generous luggage, does
-                   not report emissions (CO2 left empty on purpose).
+                   Basic fares can't be changed.
+* Camino Express - most expensive and fastest, direct to the big cities,
+                   only Standard and Flex fares.
+* CostaLink      - cheaper and direct on the coast with more departures there,
+                   one or two transfers to inland cities.
+* VerdeBus       - low-emission fleet (lowest CO2), free changes on all fares,
+                   mid price.
+* NocheVia       - evening/overnight, slow, more luggage, doesn't report
+                   emissions (CO2 left empty on purpose).
 
-A small, documented set of faulty records is injected into ``offers.csv`` so
-the validation can be demonstrated. ``injected_faults.json`` lists them with
-the expected outcome; the tests check the loader against that list.
+A few faulty records are added to offers.csv on purpose to test the
+validation. injected_faults.json lists them with the expected result and the
+tests check the loader against that list.
 """
 
 from __future__ import annotations
@@ -110,7 +110,7 @@ FARE_PRICE_FACTOR = {"B": 1.00, "S": 1.25, "F": 1.55}
 
 
 def _round_price(value: float) -> float:
-    """Round to a retail-looking price ending in .49 or .99."""
+    """Round to a price ending in .49 or .99 like real ticket prices."""
     return max(4.99, round(value * 2) / 2 - 0.01)
 
 
@@ -215,7 +215,7 @@ def _set_arrival(row: Dict[str, str], minutes: int) -> None:
 
 
 def inject_faults(rows: List[Dict[str, str]], seed: int) -> List[Dict[str, str]]:
-    """Mutate a few rows into documented faulty records. Returns the manifest."""
+    """Turn a few rows into faulty records and return a list of what was changed."""
     rng = random.Random(seed + 1)
     distance = {code: dist for code, _n, dist, _c, _r in DESTINATIONS}
     pool = list(range(len(rows)))

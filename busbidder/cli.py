@@ -1,15 +1,12 @@
 """Command-line interface.
 
-Running ``python3 -m busbidder`` with no command starts a guided,
-question-by-question mode (see ``interactive.py``). The commands below are
-for direct use and scripting.
+Running python3 -m busbidder without a command starts the guided mode
+(interactive.py). The commands below are for direct use and scripting:
 
-Commands
---------
-validate   check the data files and show what was rejected, corrected or held back
-search     filter and rank offers for one trip, explain the top offer, optionally book
+validate   check the data files and show rejected, corrected and held back records
+search     filter and rank offers for one trip, explain the top one, optionally book
 compare    run the same trip for several traveller profiles
-book       book an offer by its id
+book       book an offer by id
 bookings   list bookings or show one
 cancel     cancel a booking (simulated refund)
 """
@@ -84,7 +81,7 @@ def build_request(args: argparse.Namespace, market: Marketplace) -> TravelReques
     )
 
 
-# --- commands -----------------------------------------------------------------
+# Commands
 
 
 def cmd_validate(args: argparse.Namespace) -> int:
@@ -168,7 +165,7 @@ def cmd_cancel(args: argparse.Namespace) -> int:
     return 0
 
 
-# --- argument parsing ---------------------------------------------------------
+# Argument parsing
 
 
 def add_trip_arguments(parser: argparse.ArgumentParser) -> None:

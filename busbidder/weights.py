@@ -1,16 +1,14 @@
-"""Criterion weights and their validation.
+"""Criterion weights and how they are checked.
 
-Rules
------
-* Every name must be a registered criterion.
-* No weight may be negative.
-* The four core criteria (price, duration, departure, flexibility) must each
-  have a weight above zero, so every ranking uses at least four criteria.
-* The weights must total 1.0. Percentages that total 100 are accepted and
-  converted. Anything else is an error rather than being silently rescaled,
-  so a typo cannot quietly change the ranking.
-* A single weight above 0.5 is allowed but produces a warning, because that
-  criterion can then outvote all the others combined.
+- Every name has to be a registered criterion.
+- No weight can be negative.
+- The four core criteria (price, duration, departure, flexibility) each need
+  a weight above zero, so every ranking uses at least four criteria.
+- The weights must add up to 1.0. Percentages that add up to 100 are also
+  accepted and converted. Anything else gives an error instead of being
+  rescaled, so a typo can't change the ranking without anyone noticing.
+- One weight above 0.5 is allowed but gives a warning, since that criterion
+  can then outvote all the others together.
 """
 
 from __future__ import annotations

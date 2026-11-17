@@ -1,22 +1,16 @@
-"""Simulated booking: reserve seats, issue a reference, save, cancel.
+"""Simulated booking: reserve seats, create a reference, save and cancel.
 
-Capacity design
----------------
-``offers.csv`` is source data and is never modified. Bookings are stored in
-``output/bookings.json``. When the application starts, every confirmed
-booking is subtracted from the loaded seat counts. Seat availability is
-therefore always "seats in the source data minus confirmed bookings", the
-same in every command, and a booking can be cancelled without editing the
-offer file.
+offers.csv is never changed. Bookings are saved in output/bookings.json, and
+when the program starts every confirmed booking is subtracted from the seat
+counts. That way the available seats are the same in every command, and a
+booking can be cancelled without touching the offer file.
 
-Consistency
------------
-Seats are reserved in memory first, then the booking file is written. If
-saving fails, the reservation is rolled back so memory and file agree. The
-file is written to a temporary file and moved into place, so a crash cannot
+Seats are reserved in memory first and then the file is written. If saving
+fails the reservation is undone so memory and file stay in sync. The file is
+written to a temp file first and then moved into place, so a crash can't
 leave a half-written bookings file.
 
-No payment details are collected. ``payment_status`` is always simulated.
+No payment details are collected and payment_status is always simulated.
 """
 
 from __future__ import annotations
@@ -41,7 +35,7 @@ from .models import Marketplace, Offer, RefundPolicy
 
 logger = logging.getLogger(__name__)
 
-# Unambiguous characters only: no 0/O or 1/I, which are easy to misread.
+# No 0/O or 1/I since they are easy to mix up.
 REFERENCE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
 REFERENCE_RE = re.compile(r"^BB-[A-HJ-NP-Z2-9]{6}$")
 
@@ -131,7 +125,7 @@ class BookingManager:
         self.bookings: Dict[str, Booking] = self._load()
         self._apply_existing_bookings()
 
-    # --- persistence --------------------------------------------------------
+    # Saving and loading
 
     def _load(self) -> Dict[str, Booking]:
         if not self.store_path.exists():
@@ -175,7 +169,7 @@ class BookingManager:
             else:
                 offer.seats_available -= booking.passengers
 
-    # --- operations ---------------------------------------------------------
+    # Operations
 
     def _new_reference(self) -> str:
         for _ in range(100):

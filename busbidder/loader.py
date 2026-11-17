@@ -1,15 +1,12 @@
-"""Read companies, destinations and offers from files and validate them.
+"""Reads companies, destinations and offers from file and validates them.
 
-File formats
-------------
-* ``companies.json``   - small, descriptive records, so JSON.
-* ``destinations.csv`` - flat table.
-* ``offers.csv``       - large flat table, easy to inspect in a spreadsheet.
+companies.json has a few descriptive records so JSON fits. destinations.csv
+and offers.csv are flat tables, and offers.csv is big so it's handy to be
+able to open it in a spreadsheet.
 
-Problems with a whole file (missing, unreadable, wrong columns) raise
-``DataFileError`` and stop the program, because nothing sensible can be done
-without the file. Problems with single records are handled per record
-according to the policy described in ``validation.py``.
+If a whole file is wrong (missing, unreadable, wrong columns) a DataFileError
+is raised and the program stops, since nothing useful can be done without
+it. Problems with single records are handled per record, see validation.py.
 """
 
 from __future__ import annotations
@@ -78,7 +75,7 @@ class DataLoader:
         self.offers_path = Path(offers_path)
         self.quarantine_dir = Path(quarantine_dir) if quarantine_dir else None
 
-    # --- public API ---------------------------------------------------------
+    # Public API
 
     def load(self) -> LoadResult:
         report = LoadReport()
@@ -90,7 +87,7 @@ class DataLoader:
             logger.info(line.strip())
         return LoadResult(marketplace=market, report=report)
 
-    # --- reference data -----------------------------------------------------
+    # Reference data
 
     def load_companies(self, report: LoadReport) -> Dict[str, Company]:
         records = self._read_json_list(self.companies_path, "companies")
@@ -133,7 +130,7 @@ class DataLoader:
         logger.info("Loaded %d destinations from %s", len(destinations), source)
         return destinations
 
-    # --- offers -------------------------------------------------------------
+    # Offers
 
     def load_offers(self, market: Marketplace, report: LoadReport) -> None:
         validator = OfferValidator(market.companies, market.destinations)
@@ -177,7 +174,7 @@ class DataLoader:
         self._write_quarantine("rejected_offers.csv", rejected_rows)
         self._write_quarantine("review_offers.csv", review_rows)
 
-    # --- helpers ------------------------------------------------------------
+    # Helpers
 
     @staticmethod
     def _record_issue(report: LoadReport, issue: Issue) -> None:
@@ -234,7 +231,7 @@ class DataLoader:
 
 def load_marketplace(data_dir: Optional[Path] = None,
                      quarantine_dir: Optional[Path] = config.QUARANTINE_DIR) -> LoadResult:
-    """Convenience wrapper: load the three standard files from one folder."""
+    """Load the three standard files from one folder."""
     data_dir = Path(data_dir) if data_dir else config.DATA_DIR
     loader = DataLoader(
         companies_path=data_dir / config.COMPANIES_FILE.name,

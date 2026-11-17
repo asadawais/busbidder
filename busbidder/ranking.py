@@ -2,18 +2,16 @@
 
     total(offer) = sum over criteria c of  weight_c * score_c(offer)
 
-Every score is 0-100 and the weights total 1.0, so the total is also 0-100.
-Totals are added with ``math.fsum``, which is exactly rounded. The built-in
-``sum`` became more precise in Python 3.12, so without fsum a total that lies
-on a rounding boundary could differ between Python versions.
+All scores are 0-100 and the weights add up to 1.0, so the total is also
+0-100. I use math.fsum for the totals because the built-in sum got more
+precise in Python 3.12. Without fsum a total right on a rounding boundary
+could come out different on different Python versions.
 
-Ties
-----
-Totals are rounded to 2 decimals before sorting, so tiny floating-point
-differences do not decide the order. Equal totals are broken by, in turn:
-lower price, shorter duration, earlier departure and finally the offer id.
-This makes every ranking fully reproducible. Offers whose total equals the
-one above them are marked ``tied`` so the explanation can say so.
+Totals are rounded to 2 decimals before sorting so tiny float differences
+don't decide the order. Ties are broken by lower price, then shorter
+duration, then earlier departure and last by offer id, so the ranking is
+always the same. An offer with the same total as the one above it is marked
+tied so the explanation can mention it.
 """
 
 from __future__ import annotations
@@ -60,7 +58,7 @@ class Ranker:
         self.weights = weights
 
     def score(self, offers: List[Offer], request: TravelRequest) -> List[RankedOffer]:
-        """Score offers without sorting (rank is filled in by ``rank``)."""
+        """Score the offers without sorting them (rank is set later in rank)."""
         per_offer: List[Dict[str, CriterionScore]] = [{} for _ in offers]
         for name, weight in self.weights.items():
             crit = get_criterion(name)
@@ -105,12 +103,12 @@ def search(market: Marketplace, request: TravelRequest, weights: Weights) -> Sea
 
 
 def criterion_influence(ranked: List[RankedOffer]) -> Dict[str, float]:
-    """Share of the variation in total scores that each criterion causes.
+    """How much of the spread in total scores each criterion causes.
 
-    A criterion with a high weight but identical scores for every offer has
-    no influence on the order. This measure (weight x standard deviation of
-    the scores, as a share of the sum) shows which criteria actually drove
-    the ranking, and is used to check for unintended dominance.
+    A criterion with a high weight but the same score for every offer has no
+    effect on the order. This uses weight x standard deviation of the scores, as
+    a share of the sum, to show which criteria actually drove the ranking. I use
+    it to check that no criterion dominates by accident.
     """
     if len(ranked) < 2:
         return {}

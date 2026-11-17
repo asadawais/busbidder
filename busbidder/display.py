@@ -1,7 +1,7 @@
-"""Text formatting for the command-line interface.
+"""Text formatting for the command line.
 
-Kept separate from the CLI so that a different interface (for example a web
-page) could reuse the search and ranking code without the printing.
+Kept apart from the CLI so another interface (like a web page) could reuse
+the search and ranking code without the printing.
 """
 
 from __future__ import annotations
