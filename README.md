@@ -95,7 +95,7 @@ data/                   input data (generated with seed 42)
   offers.csv            1,575 offer rows including 20 deliberately faulty ones
   injected_faults.json  the faulty rows and their expected outcome
   profiles.json         traveller profiles
-docs/                   architecture diagram (Mermaid source and PNG)
+docs/                   architecture diagram, report figures and the script that draws them
 examples/               saved outputs that the report refers to
 tests/                  unit tests (unittest, 189 tests)
 logs/                   log file (created at run time, not committed)
@@ -175,6 +175,11 @@ stored fare conditions (full 100%, partial 50%, none 0%).
 | `examples/05_normalisation.txt` | effect of outlier fences and minimum range |
 | `examples/06_missing_emissions.txt` | missing CO2 scored as worst versus neutral |
 | `examples/07_company_wins.txt` / `.csv` | which companies win across all routes and profiles |
+| `examples/08_rank_reversal.txt` | removing one offer changes the order of the others |
+
+The report figures in `docs/figures/` are drawn from these files with
+`python3 docs/make_figures.py`. That script is the only part of the project
+that needs a third-party library (`pip install matplotlib`).
 
 ## Declarations
 
