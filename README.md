@@ -8,7 +8,7 @@ simulated booking. Final project for ACIT4420 Problem-solving with scripting.
 
 ## Requirements
 
-* Python 3.10 or newer (developed with Python 3.15, also tested on 3.10)
+* Python 3.10 or newer (developed and tested with Python 3.15, also tested on 3.10 and 3.13)
 * No third-party libraries. Only the standard library is used, so
   `requirements.txt` lists no packages and nothing needs to be installed.
 
@@ -97,7 +97,7 @@ data/                   input data (generated with seed 42)
   profiles.json         traveller profiles
 docs/                   architecture diagram, report figures and the script that draws them
 examples/               saved outputs that the report refers to
-tests/                  unit tests (unittest, 189 tests)
+tests/                  unit tests (unittest, 190 tests)
 logs/                   log file (created at run time, not committed)
 output/                 quarantine files and bookings.json (created at run time, not committed)
 ```
