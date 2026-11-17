@@ -183,8 +183,6 @@ that needs a third-party library (`pip install matplotlib`).
 
 ## Declarations
 
-### Declaration of AI use
+### Declaration of generative AI use
 
-I used Claude (Anthropic) as a supporting tool during parts of the project. It was used to help clarify programming concepts, improve code structure and documentation, assist with identifying appropriate classification thresholds and improve the wording and organisation of the README. The implementation, testing, interpretation of results and final design decisions were carried out by me. I reviewed, tested and critically assessed all AI-assisted suggestions before including them in the final work.
-
-
+I used AI tools, mainly Claude (Anthropic) and ChatGPT (OpenAI), as support during parts of the project. They assisted with designing the application, writing parts of the code, creating and formatting figures and tables, formatting the report and improving the language of the text. The central question, the scope and assumptions, the simulated dataset, the design of the experiments, the analysis, the interpretation of the results and the final decisions were carried out by me. I reviewed and critically assessed all AI-assisted suggestions and code, tested the code and checked that the content, figures and references remained accurate before including them in the final report.
