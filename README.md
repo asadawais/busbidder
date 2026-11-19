@@ -111,7 +111,7 @@ departure.
 
 | Outcome | When | Where it goes |
 |---|---|---|
-| Rejected | impossible or unusable values (negative price, unknown destination or company, invalid date, arrival before departure, rating outside 1-5, negative seats, malformed or duplicate id, id that does not match the record) | `output/quarantine/rejected_offers.csv` |
+| Rejected | impossible or unusable values (negative or non-numeric price, including NaN and infinity, unknown destination or company, invalid date, arrival before departure, rating outside 1-5, negative seats, malformed or duplicate id, id that does not match the record) | `output/quarantine/rejected_offers.csv` |
 | Corrected | intended value is unambiguous (comma decimal, letter case, duration that disagrees with the times) | kept, correction logged |
 | Review | possible but implausible (average speed above 110 km/h, price above EUR 250) | `output/quarantine/review_offers.csv` |
 
