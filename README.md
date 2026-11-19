@@ -186,3 +186,5 @@ that needs a third-party library (`pip install matplotlib`).
 ### Declaration of generative AI use
 
 I used AI tools, mainly Claude (Anthropic, 2026) and ChatGPT (OpenAI, 2026), as support during parts of the project. They assisted with designing the application, writing parts of the code, creating and formatting figures and tables, formatting the report and improving the language of the text. The central question, the scope and assumptions, the simulated dataset, the design of the experiments, the analysis, the interpretation of the results and the final decisions were carried out by me. I reviewed and critically assessed all AI-assisted suggestions and code, tested the code and checked that the content, figures and references remained accurate before including them in the final report.
+
+I went through and revised the code comments and docstrings myself, and corrected the wording and formatting in the report where the AI suggestions contained mistakes or did not match the content.
