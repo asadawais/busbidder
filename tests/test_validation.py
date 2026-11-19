@@ -65,8 +65,10 @@ class TestRejectedOffers(OfferValidatorTestCase):
             self.validate(price_eur="0")
 
     def test_non_numeric_price(self):
-        with self.assertRaises(InvalidValueError):
-            self.validate(price_eur="cheap")
+        # float() accepts "nan" and "inf", so they need their own check
+        for value in ("cheap", "nan", "NaN", "inf", "-inf"):
+            with self.assertRaises(InvalidValueError, msg=value):
+                self.validate(price_eur=value)
 
     def test_unknown_destination(self):
         with self.assertRaises(UnknownReferenceError):

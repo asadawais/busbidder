@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import dataclasses
+import math
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -58,6 +59,14 @@ def _parse_date(text: str):
         raise InvalidRequestError(f"Date {text!r} must use YYYY-MM-DD") from None
 
 
+def _hours_to_minutes(hours: Optional[float]) -> Optional[int]:
+    if hours is None:
+        return None
+    if not math.isfinite(hours) or hours <= 0:
+        raise InvalidRequestError("Maximum journey time must be a positive number of hours")
+    return round(hours * 60)
+
+
 def build_request(args: argparse.Namespace, market: Marketplace) -> TravelRequest:
     destination = market.find_destination(args.to)
     if destination is None:
@@ -76,7 +85,7 @@ def build_request(args: argparse.Namespace, market: Marketplace) -> TravelReques
         require_changeable=args.changeable,
         require_refundable=args.refundable,
         min_luggage_bags=args.bags,
-        max_duration_min=round(args.max_hours * 60) if args.max_hours else None,
+        max_duration_min=_hours_to_minutes(args.max_hours),
         passengers=args.passengers,
     )
 

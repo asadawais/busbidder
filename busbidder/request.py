@@ -15,6 +15,7 @@ score.
 
 from __future__ import annotations
 
+import math
 import re
 from dataclasses import dataclass
 from datetime import date, datetime, time
@@ -24,6 +25,11 @@ from .exceptions import InvalidRequestError
 from .validation import CODE_RE, MAX_LUGGAGE_BAGS, MAX_TRANSFERS
 
 MINUTES_PER_DAY = 24 * 60
+
+def _positive_number(value: float) -> bool:
+    """True for a normal number above 0. NaN and infinity are not accepted."""
+    return math.isfinite(value) and value > 0
+
 
 # Named departure windows. "night" wraps past midnight.
 WINDOW_PRESETS = {
@@ -127,14 +133,14 @@ class TravelRequest:
             raise InvalidRequestError(f"Destination code {self.destination!r} is not valid")
         if self.latest_date < self.earliest_date:
             raise InvalidRequestError("The travel window ends before it starts")
-        if self.max_price_eur is not None and self.max_price_eur <= 0:
-            raise InvalidRequestError("Maximum price must be positive")
+        if self.max_price_eur is not None and not _positive_number(self.max_price_eur):
+            raise InvalidRequestError("Maximum price must be a positive number")
         if self.max_transfers is not None and not 0 <= self.max_transfers <= MAX_TRANSFERS:
             raise InvalidRequestError(f"Maximum transfers must be between 0 and {MAX_TRANSFERS}")
         if self.min_luggage_bags is not None and not 0 <= self.min_luggage_bags <= MAX_LUGGAGE_BAGS:
             raise InvalidRequestError(f"Luggage must be between 0 and {MAX_LUGGAGE_BAGS} bags")
-        if self.max_duration_min is not None and self.max_duration_min <= 0:
-            raise InvalidRequestError("Maximum duration must be positive")
+        if self.max_duration_min is not None and not _positive_number(self.max_duration_min):
+            raise InvalidRequestError("Maximum duration must be a positive number")
         if not 1 <= self.passengers <= MAX_PASSENGERS:
             raise InvalidRequestError(f"Passengers must be between 1 and {MAX_PASSENGERS}")
 

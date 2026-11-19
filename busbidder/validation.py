@@ -5,8 +5,8 @@ validator that converts the fields to the right types and checks them.
 
 Every problem ends in one of three outcomes:
 
-Rejected: the record is impossible or unusable (negative price, unknown
-destination, arrival before departure, rating outside 1-5, bad id, duplicate
+Rejected: the record is impossible or unusable (negative price, a number that
+is NaN or infinite, unknown destination, arrival before departure, rating outside 1-5, bad id, duplicate
 id and so on). It is left out and written to
 output/quarantine/rejected_offers.csv with the reason.
 
@@ -26,6 +26,7 @@ offer exists but is full.
 
 from __future__ import annotations
 
+import math
 import re
 from dataclasses import dataclass
 from datetime import date, datetime, time
@@ -173,9 +174,12 @@ def parse_float(value: str, name: str, corrections: List[Correction]) -> float:
         text = text.replace(",", ".")
         corrections.append((name, value, f"comma decimal separator corrected to {text}"))
     try:
-        return float(text)
+        number = float(text)
     except ValueError:
         raise InvalidValueError(name, value, "not a number") from None
+    if not math.isfinite(number):  # float() also accepts "nan" and "inf"
+        raise InvalidValueError(name, value, "must be a finite number")
+    return number
 
 
 def parse_date(value: str, name: str) -> date:

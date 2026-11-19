@@ -66,7 +66,9 @@ class TestTravelRequest(unittest.TestCase):
             request(latest_date=date(2027, 7, 11))
 
     def test_invalid_values(self):
-        bad = [dict(max_price_eur=0), dict(max_price_eur=-5), dict(max_transfers=-1),
+        bad = [dict(max_price_eur=0), dict(max_price_eur=-5), dict(max_price_eur=float("nan")),
+               dict(max_price_eur=float("inf")), dict(max_duration_min=float("nan")),
+               dict(max_transfers=-1),
                dict(max_transfers=4), dict(passengers=0), dict(passengers=10),
                dict(max_duration_min=0), dict(min_luggage_bags=5), dict(destination="mal")]
         for overrides in bad:

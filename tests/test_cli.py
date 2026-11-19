@@ -54,11 +54,15 @@ class TestCli(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn("Unknown destination", err)
 
-    def test_invalid_weights_give_friendly_error(self):
-        code, _, err = self.run_cli("search", "--to", "Malaga", "--from", "2027-07-12",
-                                    "--weights", "price=50,duration=25")
-        self.assertEqual(code, 1)
-        self.assertIn("Core criteria", err)
+    def test_invalid_values_give_friendly_errors(self):
+        cases = [(("--weights", "price=50,duration=25"), "Core criteria"),
+                 (("--budget", "nan"), "Maximum price"),
+                 (("--max-hours", "nan"), "Maximum journey time")]
+        for extra, message in cases:
+            code, _, err = self.run_cli("search", "--to", "Malaga", "--from", "2027-07-12",
+                                        *extra)
+            self.assertEqual(code, 1, msg=extra)
+            self.assertIn(message, err)
 
     def test_no_matching_offers(self):
         code, out, _ = self.run_cli("search", "--to", "Malaga", "--from", "2027-07-12",

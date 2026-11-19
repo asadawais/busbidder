@@ -12,6 +12,7 @@ scripted answers.
 from __future__ import annotations
 
 import dataclasses
+import math
 from datetime import date, datetime
 from pathlib import Path
 from typing import Callable, List, Optional, Tuple, TypeVar
@@ -69,7 +70,7 @@ def _optional(parse: Callable[[str], T]) -> Callable[[str], Optional[T]]:
 
 def _positive_float(text: str) -> float:
     value = float(text)
-    if value <= 0:
+    if not math.isfinite(value) or value <= 0:
         raise ValueError("Please enter a number above 0")
     return value
 
