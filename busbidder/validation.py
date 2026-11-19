@@ -6,8 +6,8 @@ validator that converts the fields to the right types and checks them.
 Every problem ends in one of three outcomes:
 
 Rejected: the record is impossible or unusable (negative price, a number that
-is NaN or infinite, unknown destination, arrival before departure, rating outside 1-5, bad id, duplicate
-id and so on). It is left out and written to
+is NaN or infinite, unknown destination, arrival before departure, rating
+outside 1-5, bad id, duplicate id and so on). It is left out and written to
 output/quarantine/rejected_offers.csv with the reason.
 
 Corrected: it's clear what the value should be, so it is fixed and the
@@ -257,8 +257,10 @@ def validate_destination(raw: Mapping[str, Any]) -> Destination:
 class OfferValidator:
     """Turns a raw offer row into an Offer or raises a RecordError.
 
-    The checks always run in the same order: ids and references, then types and
-    ranges, then fields that must agree with each other, and plausibility last.
+    The checks always run in the same order: the id and the company and
+    destination references, then the dates, times and fare class and their
+    agreement with the id and then the remaining values and their ranges.
+    Plausibility is checked last.
     That way a record only goes to review if everything else is fine.
     """
 
