@@ -61,7 +61,7 @@ def format_ranking(result: SearchResult, top: int = 10) -> List[str]:
                f"{o.price_eur:>7.2f} {o.transfers:>2}  {o.fare.fare_class.label:<9}")
         for name in names:
             score = item.scores[name]
-            cell = "n/a" if score.missing else f"{score.score:.0f}"
+            cell = f"{score.score:.0f}" + ("*" if score.missing else "")
             row += f"{cell:>8}"
         row += f"{item.total:>8.2f}"
         if item.tied:
@@ -72,6 +72,9 @@ def format_ranking(result: SearchResult, top: int = 10) -> List[str]:
     legend = ", ".join(f"{short[n]} = {get_criterion(n).label.lower()}" for n in names)
     lines.append(f"Scores are 0-100 per criterion ({legend}). TOTAL is the weighted sum. "
                  "+1 = arrives next day.")
+    if any(s.missing for item in result.ranked[:top] for s in item.scores.values()):
+        lines.append("* = value missing in the data. The score shown comes from the "
+                     "missing-value policy.")
 
     influence = criterion_influence(result.ranked)
     if influence:

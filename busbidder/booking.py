@@ -1,11 +1,13 @@
-"""Simulated booking: reserve seats, create a reference, save and cancel.
+"""Simulated booking: create a reference, reserve seats, save and cancel.
 
 offers.csv is never changed. Bookings are saved in output/bookings.json, and
 when the program starts every confirmed booking is subtracted from the seat
 counts. That way the available seats are the same in every command, and a
 booking can be cancelled without touching the offer file.
 
-Seats are reserved in memory first and then the file is written. If saving
+The reference is made before the seats are reserved, so a booking that fails
+there takes no seat. Seats are reserved in memory first and then the file is
+written. If saving
 fails the reservation is undone so memory and file stay in sync. The file is
 written to a temp file first and then moved into place, so a crash can't
 leave a half-written bookings file.
@@ -187,9 +189,10 @@ class BookingManager:
         if not 1 <= passengers <= MAX_PASSENGERS:
             raise BookingError(f"Passengers must be between 1 and {MAX_PASSENGERS}")
 
+        reference = self._new_reference()  # before reserving, so a failure here takes no seats
         offer.reserve_seats(passengers)  # raises SeatUnavailableError
         booking = Booking(
-            reference=self._new_reference(),
+            reference=reference,
             offer_id=offer.offer_id,
             company=offer.company.name,
             destination=offer.destination.name,

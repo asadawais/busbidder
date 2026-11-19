@@ -102,6 +102,12 @@ class TestBooking(BookingTestCase):
         manager.rng = random.Random(5)
         second = manager.book("SOL-MAL-20270712-0830-S", "Asad Awais").reference
         self.assertNotEqual(first, second)
+        # if every new reference collides the booking fails without taking a seat
+        manager.rng = mock.Mock(choice=lambda alphabet: first[3])
+        manager.bookings[first[:3] + first[3] * 6] = manager.bookings[first]
+        with self.assertRaises(BookingError):
+            manager.book("SOL-MAL-20270712-0830-S", "Asad Awais")
+        self.assertEqual(manager.market.get_offer("SOL-MAL-20270712-0830-S").seats_available, 1)
 
     def test_save_failure_rolls_back(self):
         manager = self.manager()
